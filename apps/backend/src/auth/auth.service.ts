@@ -1,88 +1,47 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from '../database/prisma.service';
-import { GoogleLoginUserDto } from './dto/google-login.dtio';
+import * as bcrypt from 'bcrypt';
+import { UnauthorizedError } from './errors/unauthorized.error';
+import { User } from '../user/entities/user.entity';
+import { UserService } from '../user/user.service';
+import { UserPayload } from './models/UserPayload';
+import { UserToken } from './models/UserToken';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private jwtService: JwtService,
-    private configService: ConfigService,
-    private prisma: PrismaService,
+    private readonly jwtService: JwtService,
+    private readonly userService: UserService,
   ) {}
-  async googleLogin(user: GoogleLoginUserDto) {
-    if (!user) {
-      throw new UnauthorizedException('No user from google');
-    }
-    const {
-      firstName,
-      lastName,
-      email,
-      email_verified,
-      expires_in,
-      picture,
-      providerAccountId,
-      accessToken,
-      refreshToken,
-      id_token,
-    } = user;
-    const userData = await this.prisma.users.findFirst({
-      where: { email },
-      include: { accounts: true },
-    });
-    if (!userData) {
-      const newUserData = await this.prisma.users.create({
-        data: {
-          name: `${firstName} ${lastName}`,
-          email: email,
-          emailVerified: email_verified ? new Date().toISOString() : null,
-          image: picture,
-          accounts: {
-            create: {
-              type: 'oauth',
-              provider: 'google',
-              providerAccountId: providerAccountId,
-              access_token: accessToken,
-              refresh_token: refreshToken,
-              id_token: id_token,
-              expires_at: expires_in,
-            },
-          },
-        },
-      });
-      const access_token = await this.signJwt(
-        newUserData.id,
-        id_token,
-        accessToken,
-        expires_in,
-      );
-      return { access_token };
-    }
-    const access_token = await this.signJwt(
-      userData.id,
-      id_token,
-      accessToken,
-      expires_in,
-    );
-    return { access_token };
-  }
-  signJwt(
-    userId: string,
-    id_token: string,
-    access_token: string,
-    expires_at: number,
-    expiresIn = '1d',
-  ): Promise<any> {
-    const payload = {
-      sub: userId,
-      id_token,
-      access_token,
-      expires_at,
+
+  async login(user: User): Promise<UserToken> {
+    const payload: UserPayload = {
+      sub: user.id,
+      email: user.email,
+      name: user.name,
     };
-    return this.jwtService.signAsync(payload, {
-      expiresIn,
-      secret: this.configService.get('APP_JWT_SECRET'),
-    });
+
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
+  }
+
+  async validateUser(email: string, password: string): Promise<User> {
+    const user = await this.userService.findByEmail(email);
+
+    if (user) {
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+
+      if (isPasswordValid) {
+        return {
+          ...user,
+          password: undefined,
+        };
+      }
+    }
+
+    throw new UnauthorizedError(
+      'Email address or password provided is incorrect.',
+    );
   }
 }

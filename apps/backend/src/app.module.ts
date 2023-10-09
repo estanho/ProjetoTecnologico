@@ -1,36 +1,21 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
-import * as Joi from 'joi';
-import { GoogleStrategy } from './auth/strategies/google.strategy';
-import { PassportModule } from '@nestjs/passport';
-import { JwtModule } from '@nestjs/jwt';
-import { JwtStrategy } from './auth/strategies/jwt.strategy';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { PrismaModule } from './database/prisma.module';
+import { UserModule } from './user/user.module';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      validationSchema: Joi.object({
-        DATABASE_URL: Joi.string().required(),
-        DIRECT_URL: Joi.string().required(),
-        GOOGLE_CLIENT_ID: Joi.string().required(),
-        GOOGLE_CLIENT_SECRET: Joi.string().required(),
-        GOOGLE_CALLBACK_URL: Joi.string().required(),
-        APP_JWT_SECRET: Joi.string().required(),
-      }),
-    }),
-    AuthModule,
-    PassportModule,
-    JwtModule.register({
-      global: true,
-    }),
-    PrismaModule,
-  ],
+  imports: [PrismaModule, UserModule, AuthModule],
   controllers: [AppController],
-  providers: [AppService, GoogleStrategy, JwtStrategy],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AppModule {}
