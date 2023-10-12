@@ -1,8 +1,8 @@
 import './globals.css'
 import React from 'react';
 import type { Metadata } from 'next'
-import Providers from './_providers/Providers'
-import Appbar from './_components/Appbar';
+import Providers from './providers/Providers'
+import Appbar from './components/Appbar';
 
 export const metadata: Metadata = {
   title: 'Create Next App',

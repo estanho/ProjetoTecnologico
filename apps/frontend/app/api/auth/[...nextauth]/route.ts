@@ -1,4 +1,4 @@
-import { signJwt } from "@/app/_lib/jwt";
+import { signJwt } from "@/app/lib/jwt";
 import { SupabaseAdapter } from "@auth/supabase-adapter";
 import { Adapter } from "next-auth/adapters";
 import NextAuth from "next-auth/next";

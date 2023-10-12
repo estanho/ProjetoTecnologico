@@ -10,6 +10,9 @@
   },
   "dependencies": {
     "@auth/supabase-adapter": "^0.1.4",
+    "@supabase/auth-ui-react": "^0.4.5",
+    "@supabase/auth-ui-shared": "^0.1.7",
+    "@supabase/supabase-js": "^2.38.0",
     "jsonwebtoken": "^9.0.2",
     "next": "13.5.4",
     "next-auth": "^4.23.2",
