@@ -34,7 +34,7 @@ Table users {
   id String [pk]
   code String [not null]
   name String [not null]
-  email String [not null]
+  email String [unique, not null]
   cellphone String [not null]
   type String [not null]
   role_id String [not null]

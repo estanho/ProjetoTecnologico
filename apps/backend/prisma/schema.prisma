@@ -61,7 +61,7 @@ model User {
   id        String @id @default(uuid())
   code      String
   name      String
-  email     String
+  email     String @unique
   cellphone String
   type      String
 
