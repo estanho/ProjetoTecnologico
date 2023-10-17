@@ -50,7 +50,7 @@ export default function AuthForm() {
           },
         },
       }}
-      redirectTo="http://localhost:3000/auth/callback"
+      redirectTo={`${window.location.origin}/auth/callback`}
     />
   );
 }
