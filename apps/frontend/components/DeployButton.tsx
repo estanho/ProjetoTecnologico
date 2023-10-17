@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 export default function DeployButton() {
   return (
@@ -20,5 +20,5 @@ export default function DeployButton() {
       </svg>
       MicroRota
     </a>
-  )
+  );
 }
