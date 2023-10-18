@@ -214,3 +214,19 @@ model Student_Trip {
 
   @@map("student_trips")
 }
+
+model routes {
+  id          String @id @default(uuid())
+  name        String
+  source_name String
+  source_lat  Float
+  source_lon  Float
+  dest_name   String
+  dest_lat    Float
+  dest_lon    Float
+  distance    Float
+  duration    Float
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}

@@ -144,6 +144,21 @@ Table student_trips {
   updated_at DateTime [not null]
 }
 
+Table routes {
+  id String [pk]
+  name String [not null]
+  source_name String [not null]
+  source_lat Float [not null]
+  source_lon Float [not null]
+  dest_name String [not null]
+  dest_lat Float [not null]
+  dest_lon Float [not null]
+  distance Float [not null]
+  duration Float [not null]
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [not null]
+}
+
 Ref: schools.adress_id > addresses.id
 
 Ref: schools.itinerary_id > itineraries.id

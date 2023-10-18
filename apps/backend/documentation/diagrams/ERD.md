@@ -110,6 +110,22 @@ erDiagram
     DateTime updated_at 
     }
   
+
+  "routes" {
+    String id "🗝️"
+    String name 
+    String source_name 
+    Float source_lat 
+    Float source_lon 
+    String dest_name 
+    Float dest_lat 
+    Float dest_lon 
+    Float distance 
+    Float duration 
+    DateTime created_at 
+    DateTime updated_at 
+    }
+  
     "addresses" o{--}o "students" : "student"
     "addresses" o{--}o "schools" : "school"
     "schools" o|--|| "addresses" : "adress"
