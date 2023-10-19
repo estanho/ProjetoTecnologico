@@ -10,7 +10,7 @@ import {
 import { RoutesService } from './routes.service';
 import { CreateRouteDto } from './dto/create-route.dto';
 import { UpdateRouteDto } from './dto/update-route.dto';
-import { IsPublic } from 'src/auth/decorators/is-public.decorator';
+import { IsPublic } from '../auth/decorators/is-public.decorator';
 
 @IsPublic()
 @Controller('routes')
