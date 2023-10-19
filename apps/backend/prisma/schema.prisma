@@ -181,19 +181,33 @@ model Student_Trip {
 }
 
 model Route {
-  id          String   @id @default(uuid())
-  name        String
-  source_name String
-  source_lat  Float
-  source_lon  Float
-  dest_name   String
-  dest_lat    Float
-  dest_lon    Float
-  distance    Float
-  duration    Float
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
-  directions  Json
+  id         String @id @default(uuid())
+  name       String
+  distance   Float
+  duration   Float
+  directions Json
+
+  source_id String
+  source    Place  @relation("source", fields: [source_id], references: [id])
+
+  destination_id String
+  destination    Place  @relation("destination", fields: [destination_id], references: [id])
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
   @@map("routes")
+}
+
+model Place {
+  id        String @id @default(uuid())
+  place_id  String
+  name      String
+  latitude  Float
+  longitude Float
+
+  source      Route[] @relation("source")
+  destination Route[] @relation("destination")
+
+  @@map("places")
 }

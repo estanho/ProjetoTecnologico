@@ -2,24 +2,62 @@ import { Injectable } from '@nestjs/common';
 import { CreateRouteDto } from './dto/create-route.dto';
 import { UpdateRouteDto } from './dto/update-route.dto';
 import { PrismaService } from '../database/prisma.service';
+import { DirectionsService } from '../maps/directions/directions.service';
 
 @Injectable()
 export class RoutesService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(
+    private prismaService: PrismaService,
+    private directionsService: DirectionsService,
+  ) {}
 
-  create(createRouteDto: CreateRouteDto) {
+  async create(createRouteDto: CreateRouteDto) {
+    const { available_travel_modes, geocoded_waypoints, routes, request } =
+      await this.directionsService.getDirections(
+        createRouteDto.source_id,
+        createRouteDto.destination_id,
+      );
+
+    const legs = routes[0].legs[0];
+
     return this.prismaService.route.create({
       data: {
         name: createRouteDto.name,
-        source_name: 'nome origem',
-        source_lat: 0,
-        source_lon: 0,
-        dest_name: 'nome destino',
-        dest_lat: 0,
-        dest_lon: 0,
-        distance: 0,
-        duration: 0,
-        directions: '{}',
+        source: {
+          create: {
+            place_id: createRouteDto.source_id,
+            name: legs.start_address,
+            latitude: legs.start_location.lat,
+            longitude: legs.start_location.lng,
+          },
+        },
+        destination: {
+          create: {
+            place_id: createRouteDto.destination_id,
+            name: legs.end_address,
+            latitude: legs.end_location.lat,
+            longitude: legs.end_location.lng,
+          },
+        },
+        distance: legs.distance.value,
+        duration: legs.duration.value,
+        directions: JSON.stringify({
+          available_travel_modes,
+          geocoded_waypoints,
+          routes,
+          request,
+        }),
+      },
+      select: {
+        id: true,
+        name: true,
+        created_at: true,
+        updated_at: true,
+        source: true,
+        destination: true,
+        distance: true,
+        duration: true,
+        directions: true,
       },
     });
   }

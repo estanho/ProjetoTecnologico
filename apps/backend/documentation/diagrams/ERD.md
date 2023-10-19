@@ -114,17 +114,20 @@ erDiagram
   "routes" {
     String id "🗝️"
     String name 
-    String source_name 
-    Float source_lat 
-    Float source_lon 
-    String dest_name 
-    Float dest_lat 
-    Float dest_lon 
     Float distance 
     Float duration 
+    Json directions 
     DateTime created_at 
     DateTime updated_at 
-    Json directions 
+    }
+  
+
+  "places" {
+    String id "🗝️"
+    String place_id 
+    String name 
+    Float latitude 
+    Float longitude 
     }
   
     "addresses" o{--}o "schools" : "school"
@@ -153,4 +156,8 @@ erDiagram
     "trips" o|--|| "itineraries" : "Itinerary"
     "student_trips" o|--|| "students" : "student"
     "student_trips" o|--|| "trips" : "trip"
+    "routes" o|--|| "places" : "source"
+    "routes" o|--|| "places" : "destination"
+    "places" o{--}o "routes" : "source"
+    "places" o{--}o "routes" : "destination"
 ```

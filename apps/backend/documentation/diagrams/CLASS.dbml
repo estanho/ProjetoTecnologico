@@ -147,17 +147,25 @@ Table student_trips {
 Table routes {
   id String [pk]
   name String [not null]
-  source_name String [not null]
-  source_lat Float [not null]
-  source_lon Float [not null]
-  dest_name String [not null]
-  dest_lat Float [not null]
-  dest_lon Float [not null]
   distance Float [not null]
   duration Float [not null]
+  directions Json [not null]
+  source_id String [not null]
+  source places [not null]
+  destination_id String [not null]
+  destination places [not null]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
-  directions Json [not null]
+}
+
+Table places {
+  id String [pk]
+  place_id String [not null]
+  name String [not null]
+  latitude Float [not null]
+  longitude Float [not null]
+  source routes [not null]
+  destination routes [not null]
 }
 
 Ref: schools.adress_id > addresses.id
@@ -185,3 +193,7 @@ Ref: trips.itinerary_id > itineraries.id
 Ref: student_trips.student_id > students.id
 
 Ref: student_trips.trip_id > trips.id
+
+Ref: routes.source_id > places.id
+
+Ref: routes.destination_id > places.id
