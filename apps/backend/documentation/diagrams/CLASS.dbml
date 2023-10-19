@@ -6,10 +6,10 @@ Table addresses {
   id String [pk]
   latitude String [not null]
   longitude String [not null]
-  student students [not null]
-  school schools [not null]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
+  school schools [not null]
+  student students [not null]
 }
 
 Table schools {
@@ -22,70 +22,70 @@ Table schools {
   night_arrival DateTime [not null]
   night_departure DateTime [not null]
   adress_id String [not null]
-  adress addresses [not null]
   itinerary_id String [not null]
-  itinerary itineraries [not null]
-  student students [not null]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
+  adress addresses [not null]
+  itinerary itineraries [not null]
+  student students [not null]
 }
 
 Table users {
   id String [pk]
-  code String [not null]
-  name String [not null]
   email String [unique, not null]
+  name String [not null]
   cellphone String [not null]
-  type String [not null]
-  role_id String [not null]
-  role roles [not null]
-  driver_id String [not null]
-  driver drivers [not null]
-  responsible_id String [not null]
-  responsible responsibles [not null]
+  code String [not null]
   created_at DateTime [default: `now()`, not null]
+  driver_id String [not null]
+  responsible_id String [not null]
+  role_id String [not null]
+  type String [not null]
   updated_at DateTime [not null]
+  driver drivers [not null]
+  responsible responsibles [not null]
+  role roles [not null]
 }
 
 Table roles {
   id String [pk]
   name String [not null]
-  user users [not null]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
+  user users [not null]
 }
 
 Table responsibles {
   id String [pk]
-  user users [not null]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
+  user users [not null]
 }
 
 Table students {
   id String [pk]
-  goes Boolean [not null]
-  return Boolean [not null]
-  morning Boolean [not null]
-  afternoon Boolean [not null]
-  night Boolean [not null]
   school_id String [not null]
-  school schools [not null]
   adress_id String [not null]
-  adress addresses [not null]
-  student_trip student_trips [not null]
-  student_itinerary student_itineraries [not null]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
+  afternoon Boolean [not null]
+  goes Boolean [not null]
+  morning Boolean [not null]
+  night Boolean [not null]
+  return Boolean [not null]
+  student_itinerary student_itineraries [not null]
+  student_trip student_trips [not null]
+  adress addresses [not null]
+  school schools [not null]
 }
 
 Table drivers {
   id String [pk]
-  user users [not null]
-  itinerary_id String [not null]
-  itinerary itineraries [not null]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
+  itinerary_id String [not null]
+  itinerary itineraries [not null]
+  user users [not null]
 }
 
 Table itineraries {
@@ -99,21 +99,21 @@ Table itineraries {
   morning Boolean [not null]
   afternoon Boolean [not null]
   night Boolean [not null]
-  driver drivers [not null]
-  school schools [not null]
-  trip trips [not null]
-  student_Itinerary student_itineraries [not null]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
+  driver drivers [not null]
+  school schools [not null]
+  student_Itinerary student_itineraries [not null]
+  trip trips [not null]
 }
 
 Table student_itineraries {
   student_id String [not null]
-  student students [not null]
   itinerary_id String [not null]
-  itinerary itineraries [not null]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
+  itinerary itineraries [not null]
+  student students [not null]
 
   indexes {
     (student_id, itinerary_id) [pk]
@@ -125,11 +125,11 @@ Table trips {
   path Json [not null]
   started_at DateTime [not null]
   finished_at DateTime [not null]
-  itinerary_id String [not null]
-  Itinerary itineraries
-  student_trip student_trips [not null]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
+  itinerary_id String [not null]
+  student_trip student_trips [not null]
+  Itinerary itineraries [not null]
 }
 
 Table student_trips {
@@ -137,11 +137,11 @@ Table student_trips {
   embarked_at DateTime [not null]
   disembarked_at DateTime [not null]
   student_id String [not null]
-  student students [not null]
   trip_id String [not null]
-  trip trips [not null]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
+  student students [not null]
+  trip trips [not null]
 }
 
 Table routes {
@@ -157,27 +157,28 @@ Table routes {
   duration Float [not null]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
+  directions Json [not null]
 }
 
 Ref: schools.adress_id > addresses.id
 
 Ref: schools.itinerary_id > itineraries.id
 
-Ref: users.role_id > roles.id
-
 Ref: users.driver_id > drivers.id
 
 Ref: users.responsible_id > responsibles.id
 
-Ref: students.school_id > schools.id
+Ref: users.role_id > roles.id
 
 Ref: students.adress_id > addresses.id
 
+Ref: students.school_id > schools.id
+
 Ref: drivers.itinerary_id > itineraries.id
 
-Ref: student_itineraries.student_id > students.id
-
 Ref: student_itineraries.itinerary_id > itineraries.id
+
+Ref: student_itineraries.student_id > students.id
 
 Ref: trips.itinerary_id > itineraries.id
 

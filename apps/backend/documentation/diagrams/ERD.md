@@ -26,12 +26,12 @@ erDiagram
 
   "users" {
     String id "🗝️"
-    String code 
-    String name 
     String email 
+    String name 
     String cellphone 
-    String type 
+    String code 
     DateTime created_at 
+    String type 
     DateTime updated_at 
     }
   
@@ -53,13 +53,13 @@ erDiagram
 
   "students" {
     String id "🗝️"
-    Boolean goes 
-    Boolean return 
-    Boolean morning 
-    Boolean afternoon 
-    Boolean night 
     DateTime created_at 
     DateTime updated_at 
+    Boolean afternoon 
+    Boolean goes 
+    Boolean morning 
+    Boolean night 
+    Boolean return 
     }
   
 
@@ -124,32 +124,33 @@ erDiagram
     Float duration 
     DateTime created_at 
     DateTime updated_at 
+    Json directions 
     }
   
-    "addresses" o{--}o "students" : "student"
     "addresses" o{--}o "schools" : "school"
+    "addresses" o{--}o "students" : "student"
     "schools" o|--|| "addresses" : "adress"
     "schools" o|--|| "itineraries" : "itinerary"
     "schools" o{--}o "students" : "student"
-    "users" o|--|| "roles" : "role"
     "users" o|--|| "drivers" : "driver"
     "users" o|--|| "responsibles" : "responsible"
+    "users" o|--|| "roles" : "role"
     "roles" o{--}o "users" : "user"
     "responsibles" o{--}o "users" : "user"
-    "students" o|--|| "schools" : "school"
-    "students" o|--|| "addresses" : "adress"
-    "students" o{--}o "student_trips" : "student_trip"
     "students" o{--}o "student_itineraries" : "student_itinerary"
-    "drivers" o{--}o "users" : "user"
+    "students" o{--}o "student_trips" : "student_trip"
+    "students" o|--|| "addresses" : "adress"
+    "students" o|--|| "schools" : "school"
     "drivers" o|--|| "itineraries" : "itinerary"
+    "drivers" o{--}o "users" : "user"
     "itineraries" o{--}o "drivers" : "driver"
     "itineraries" o{--}o "schools" : "school"
-    "itineraries" o{--}o "trips" : "trip"
     "itineraries" o{--}o "student_itineraries" : "student_Itinerary"
-    "student_itineraries" o|--|| "students" : "student"
+    "itineraries" o{--}o "trips" : "trip"
     "student_itineraries" o|--|| "itineraries" : "itinerary"
-    "trips" o|--|o "itineraries" : "Itinerary"
+    "student_itineraries" o|--|| "students" : "student"
     "trips" o{--}o "student_trips" : "student_trip"
+    "trips" o|--|| "itineraries" : "Itinerary"
     "student_trips" o|--|| "students" : "student"
     "student_trips" o|--|| "trips" : "trip"
 ```

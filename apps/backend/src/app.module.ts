@@ -6,9 +6,10 @@ import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { PrismaModule } from './database/prisma.module';
 import { RoutesModule } from './routes/routes.module';
+import { MapsModule } from './maps/maps.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, RoutesModule],
+  imports: [PrismaModule, AuthModule, RoutesModule, MapsModule],
   controllers: [AppController],
   providers: [
     AppService,

@@ -20,21 +20,19 @@ datasource db {
 }
 
 model Address {
-  id        String @id @default(uuid())
-  latitude  String
-  longitude String
-
-  student Student[]
-  school  School[]
-
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id         String    @id @default(uuid())
+  latitude   String
+  longitude  String
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  school     School[]
+  student    Student[]
 
   @@map("addresses")
 }
 
 model School {
-  id                  String   @id @default(uuid())
+  id                  String    @id @default(uuid())
   name                String
   morning_arrival     DateTime
   morning_departure   DateTime
@@ -42,158 +40,128 @@ model School {
   afternoon_departure DateTime
   night_arrival       DateTime
   night_departure     DateTime
-
-  adress_id String
-  adress    Address @relation(fields: [adress_id], references: [id])
-
-  itinerary_id String
-  itinerary    Itinerary @relation(fields: [itinerary_id], references: [id])
-
-  student Student[]
-
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  adress_id           String
+  itinerary_id        String
+  created_at          DateTime  @default(now())
+  updated_at          DateTime  @updatedAt
+  adress              Address   @relation(fields: [adress_id], references: [id])
+  itinerary           Itinerary @relation(fields: [itinerary_id], references: [id])
+  student             Student[]
 
   @@map("schools")
 }
 
 model User {
-  id        String @id @default(uuid())
-  code      String
-  name      String
-  email     String @unique
-  cellphone String
-  type      String
-
-  role_id String
-  role    Role   @relation(fields: [role_id], references: [id])
-
-  driver_id String
-  driver    Driver @relation(fields: [driver_id], references: [id])
-
+  id             String      @id @default(uuid())
+  email          String      @unique
+  name           String
+  cellphone      String
+  code           String
+  created_at     DateTime    @default(now())
+  driver_id      String
   responsible_id String
+  role_id        String
+  type           String
+  updated_at     DateTime    @updatedAt
+  driver         Driver      @relation(fields: [driver_id], references: [id])
   responsible    Responsible @relation(fields: [responsible_id], references: [id])
-
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  role           Role        @relation(fields: [role_id], references: [id])
 
   @@map("users")
 }
 
 model Role {
-  id   String @id @default(uuid())
-  name String
-
-  user User[]
-
+  id         String   @id @default(uuid())
+  name       String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+  user       User[]
 
   @@map("roles")
 }
 
 model Responsible {
-  id String @id @default(uuid())
-
-  user User[]
-
+  id         String   @id @default(uuid())
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+  user       User[]
 
   @@map("responsibles")
 }
 
 model Student {
-  id        String  @id @default(uuid())
-  goes      Boolean
-  return    Boolean
-  morning   Boolean
-  afternoon Boolean
-  night     Boolean
-
-  school_id String
-  school    School @relation(fields: [school_id], references: [id])
-
-  adress_id String
-  adress    Address @relation(fields: [adress_id], references: [id])
-
-  student_trip Student_Trip[]
-
+  id                String              @id @default(uuid())
+  school_id         String
+  adress_id         String
+  created_at        DateTime            @default(now())
+  updated_at        DateTime            @updatedAt
+  afternoon         Boolean
+  goes              Boolean
+  morning           Boolean
+  night             Boolean
+  return            Boolean
   student_itinerary Student_Itinerary[]
-
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  student_trip      Student_Trip[]
+  adress            Address             @relation(fields: [adress_id], references: [id])
+  school            School              @relation(fields: [school_id], references: [id])
 
   @@map("students")
 }
 
 model Driver {
-  id String @id @default(uuid())
-
-  user User[]
-
+  id           String    @id @default(uuid())
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
   itinerary_id String
   itinerary    Itinerary @relation(fields: [itinerary_id], references: [id])
-
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  user         User[]
 
   @@map("drivers")
 }
 
 model Itinerary {
-  id        String  @id @default(uuid())
-  monday    Boolean
-  tuesday   Boolean
-  wednesday Boolean
-  thursday  Boolean
-  friday    Boolean
-  saturday  Boolean
-  morning   Boolean
-  afternoon Boolean
-  night     Boolean
-
-  driver Driver[]
-
-  school School[]
-
-  trip Trip[]
-
+  id                String              @id @default(uuid())
+  monday            Boolean
+  tuesday           Boolean
+  wednesday         Boolean
+  thursday          Boolean
+  friday            Boolean
+  saturday          Boolean
+  morning           Boolean
+  afternoon         Boolean
+  night             Boolean
+  created_at        DateTime            @default(now())
+  updated_at        DateTime            @updatedAt
+  driver            Driver[]
+  school            School[]
   student_Itinerary Student_Itinerary[]
-
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  trip              Trip[]
 
   @@map("itineraries")
 }
 
 model Student_Itinerary {
-  student_id String
-  student    Student @relation(fields: [student_id], references: [id])
-
+  student_id   String
   itinerary_id String
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
   itinerary    Itinerary @relation(fields: [itinerary_id], references: [id])
-
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  student      Student   @relation(fields: [student_id], references: [id])
 
   @@id([student_id, itinerary_id])
   @@map("student_itineraries")
 }
 
 model Trip {
-  id          String   @id @default(uuid())
-  path        Json
-  started_at  DateTime
-  finished_at DateTime
-
+  id           String         @id @default(uuid())
+  path         Json
+  started_at   DateTime
+  finished_at  DateTime
+  created_at   DateTime       @default(now())
+  updated_at   DateTime       @updatedAt
   itinerary_id String
-  Itinerary    Itinerary? @relation(fields: [itinerary_id], references: [id])
-
   student_trip Student_Trip[]
-
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  Itinerary    Itinerary      @relation(fields: [itinerary_id], references: [id])
 
   @@map("trips")
 }
@@ -202,21 +170,18 @@ model Student_Trip {
   id             String   @id @default(uuid())
   embarked_at    DateTime
   disembarked_at DateTime
-
-  student_id String
-  student    Student @relation(fields: [student_id], references: [id])
-
-  trip_id String
-  trip    Trip   @relation(fields: [trip_id], references: [id])
-
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  student_id     String
+  trip_id        String
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+  student        Student  @relation(fields: [student_id], references: [id])
+  trip           Trip     @relation(fields: [trip_id], references: [id])
 
   @@map("student_trips")
 }
 
-model routes {
-  id          String @id @default(uuid())
+model Route {
+  id          String   @id @default(uuid())
   name        String
   source_name String
   source_lat  Float
@@ -226,7 +191,9 @@ model routes {
   dest_lon    Float
   distance    Float
   duration    Float
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  directions  Json
 
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  @@map("routes")
 }
