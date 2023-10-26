@@ -13,6 +13,11 @@ const center = {
   lng: -50.9674,
 };
 
+type Location = {
+  lat: number;
+  lng: number;
+};
+
 function Map() {
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
@@ -20,8 +25,10 @@ function Map() {
     language: 'pt-br',
   });
 
-  const [map, setMap] = React.useState(null);
-  const [currentLocation, setCurrentLocation] = React.useState(null);
+  const [map, setMap] = React.useState<google.maps.Map | null>(null);
+  const [currentLocation, setCurrentLocation] = React.useState<Location | null>(
+    null,
+  );
 
   useEffect(() => {
     if (isLoaded && map) {
