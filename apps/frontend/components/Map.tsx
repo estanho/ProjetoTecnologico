@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 
 const containerStyle = {
@@ -9,8 +9,8 @@ const containerStyle = {
 };
 
 const center = {
-  lat: -29.936368824123292,
-  lng: -50.96744084292791,
+  lat: -29.9363,
+  lng: -50.9674,
 };
 
 function Map() {
@@ -21,12 +21,38 @@ function Map() {
   });
 
   const [map, setMap] = React.useState(null);
+  const [currentLocation, setCurrentLocation] = React.useState(null);
+
+  useEffect(() => {
+    if (isLoaded && map) {
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            console.log('Coordenadas obtidas:', { latitude, longitude });
+
+            setCurrentLocation({ lat: latitude, lng: longitude });
+
+            if (map) {
+              map.setCenter({ lat: latitude, lng: longitude });
+            }
+          },
+          (error) => {
+            console.error('Erro ao obter a localização do usuário:', error);
+          },
+          {
+            enableHighAccuracy: true, // Tenta obter a melhor precisão possível
+            timeout: 10000, // Tempo limite de 10 segundos
+            maximumAge: 0, // Não use uma posição em cache
+          },
+        );
+      } else {
+        console.error('Geolocalização não suportada pelo navegador.');
+      }
+    }
+  }, [isLoaded, map]);
 
   const onLoad = React.useCallback(function callback(map: any) {
-    // This is just an example of getting and using the map instance!!! don't just blindly copy!
-    const bounds = new window.google.maps.LatLngBounds(center);
-    map.fitBounds(bounds);
-
     setMap(map);
   }, []);
 
@@ -36,13 +62,13 @@ function Map() {
 
   return isLoaded ? (
     <GoogleMap
+      zoom={13}
       mapContainerStyle={containerStyle}
       center={center}
-      zoom={13}
       onLoad={onLoad}
       onUnmount={onUnmount}
       options={{
-        zoomControl: false,
+        zoomControl: true,
         streetViewControl: false,
         mapTypeControl: false,
         fullscreenControl: false,
