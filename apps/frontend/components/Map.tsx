@@ -1,7 +1,12 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
+import {
+  GoogleMap,
+  Marker,
+  useJsApiLoader,
+  Autocomplete,
+} from '@react-google-maps/api';
 
 const containerStyle = {
   width: '100%',
@@ -23,12 +28,21 @@ function Map() {
     id: 'google-map-script',
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string,
     language: 'pt-br',
+    libraries: ['places'],
   });
 
   const [map, setMap] = React.useState<google.maps.Map | null>(null);
   const [currentLocation, setCurrentLocation] = React.useState<Location | null>(
     null,
   );
+
+  const onLoad = React.useCallback(function callback(map: any) {
+    setMap(map);
+  }, []);
+
+  const onUnmount = React.useCallback(function callback(map: any) {
+    setMap(null);
+  }, []);
 
   useEffect(() => {
     if (isLoaded && map) {
@@ -59,14 +73,6 @@ function Map() {
     }
   }, [isLoaded, map]);
 
-  const onLoad = React.useCallback(function callback(map: any) {
-    setMap(map);
-  }, []);
-
-  const onUnmount = React.useCallback(function callback(map: any) {
-    setMap(null);
-  }, []);
-
   return isLoaded ? (
     <GoogleMap
       zoom={13}
@@ -81,8 +87,7 @@ function Map() {
         fullscreenControl: false,
       }}
     >
-      {/* Child components, such as markers, info windows, etc. */}
-      <></>
+      {currentLocation && <Marker position={currentLocation} />}
     </GoogleMap>
   ) : (
     <></>
