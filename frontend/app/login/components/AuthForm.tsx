@@ -11,11 +11,12 @@ export default function AuthForm() {
 
   supabase.auth.onAuthStateChange(async (event) => {
     if (event == 'SIGNED_IN') {
-      router.push('/auth/callback');
+      router.push('/api/auth/callback');
     }
   });
-  if (typeof window !== 'undefined') {
-    return (
+
+  return (
+    typeof window !== undefined && (
       <Auth
         supabaseClient={supabase}
         appearance={{ theme: ThemeSupa }}
@@ -50,8 +51,8 @@ export default function AuthForm() {
             },
           },
         }}
-        redirectTo={`${window.location.origin}/auth/callback`}
+        redirectTo={`${window.location.origin}/api/auth/callback`}
       />
-    );
-  }
+    )
+  );
 }
