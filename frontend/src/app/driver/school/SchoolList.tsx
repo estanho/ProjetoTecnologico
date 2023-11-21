@@ -55,9 +55,7 @@ export default function App() {
 
   const getList = useCallback(async () => {
     try {
-      const { data } = await axios.get(
-        `http://localhost:3000/api/driver/school`,
-      );
+      const { data } = await axios.get(`/api/driver/school`);
       if (data.error === false) {
         setSchools(data.schools);
         setStarted(data.started);
@@ -89,9 +87,7 @@ export default function App() {
 
   const deleteItem = async (item: any) => {
     try {
-      const { data } = await axios.delete(
-        `http://localhost:3000/api/driver/school/${item.id}`,
-      );
+      const { data } = await axios.delete(`/api/driver/school/${item.id}`);
       if (data.error === true) {
         // Tratar erro
         throw error;
@@ -113,12 +109,9 @@ export default function App() {
 
   const updateStatus = async (item: any) => {
     try {
-      const { data } = await axios.patch(
-        `http://localhost:3000/api/driver/school/${item.id}`,
-        {
-          status: item.status,
-        },
-      );
+      const { data } = await axios.patch(`/api/driver/school/${item.id}`, {
+        status: item.status,
+      });
       if (data.error === true) {
         // Tratar erro
         throw error;

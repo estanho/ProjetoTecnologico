@@ -143,9 +143,7 @@ export default function StudentForm({ student, started }: any) {
 
   const getSchools = useCallback(async () => {
     try {
-      const { data } = await axios.get(
-        `http://localhost:3000/api/driver/school`,
-      );
+      const { data } = await axios.get(`/api/driver/school`);
       if (data.error === false) {
         setSchools(data.schools);
         if (student !== null) {

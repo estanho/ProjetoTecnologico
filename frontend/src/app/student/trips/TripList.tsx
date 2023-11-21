@@ -20,9 +20,7 @@ export default function MyComponent() {
 
   const getList = useCallback(async () => {
     try {
-      const { data } = await axios.get(
-        `http://localhost:3000/api/student/trip`,
-      );
+      const { data } = await axios.get(`/api/student/trip`);
       if (data.error === false) {
         setStudent(data.student);
         //toast.success('Lista atualizada! 😁');

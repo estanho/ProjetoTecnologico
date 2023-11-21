@@ -35,10 +35,7 @@ function App() {
       },
     };
 
-    const { data: results } = await axios.get(
-      'http://localhost:3001/trips',
-      config,
-    );
+    const { data: results } = await axios.get('/trips', config);
 
     console.log(results);
 

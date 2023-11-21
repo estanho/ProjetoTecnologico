@@ -17,7 +17,7 @@ export default function MyComponent() {
 
   const getList = useCallback(async () => {
     try {
-      const { data } = await axios.get(`http://localhost:3000/api/driver/trip`);
+      const { data } = await axios.get(`/api/driver/trip`);
       if (data.error === false) {
         setTrips(data.trips);
         //toast.success('Lista atualizada! 😁');

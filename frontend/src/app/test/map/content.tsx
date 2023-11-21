@@ -20,7 +20,7 @@ export default function MyComponent() {
 
   const getList = useCallback(async () => {
     try {
-      const { data } = await axios.get(`http://localhost:3000/api/driver/map`);
+      const { data } = await axios.get(`/api/driver/map`);
       if (data.error === false) {
         setItinerary(data.itinerary);
         //toast.success('Lista atualizada! 😁');

@@ -77,9 +77,7 @@ export default function App() {
 
   const getList = useCallback(async () => {
     try {
-      const { data } = await axios.get(
-        `http://localhost:3000/api/driver/student`,
-      );
+      const { data } = await axios.get(`/api/driver/student`);
       if (data.error === false) {
         setStudents(data.data);
         setStarted(data.started);
@@ -112,9 +110,7 @@ export default function App() {
 
   const deleteItem = async (item: any) => {
     try {
-      const { data } = await axios.delete(
-        `http://localhost:3000/api/driver/student/${item.id}`,
-      );
+      const { data } = await axios.delete(`/api/driver/student/${item.id}`);
       if (data.error === true) {
         // Tratar erro
         throw error;

@@ -246,9 +246,7 @@ export default function SchoolForm({ school, started }: any) {
 
   const getSchools = useCallback(async () => {
     try {
-      const { data } = await axios.get(
-        `http://localhost:3000/api/driver/shift`,
-      );
+      const { data } = await axios.get(`/api/driver/shift`);
       if (data.error === false) {
         setShifts({
           morning: data.data.morning,

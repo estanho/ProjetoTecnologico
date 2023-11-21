@@ -20,9 +20,7 @@ export default function MyComponent() {
 
   const getList = useCallback(async () => {
     try {
-      const { data } = await axios.get(
-        `http://localhost:3000/api/responsible/trip`,
-      );
+      const { data } = await axios.get(`/api/responsible/trip`);
       if (data.error === false) {
         setStudents(data.students);
         //toast.success('Lista atualizada! 😁');
@@ -50,7 +48,7 @@ export default function MyComponent() {
   const updateStatus = async (item: any) => {
     try {
       const { data } = await axios.patch(
-        `http://localhost:3000/api/responsible/trip/${item.trip_id}`,
+        `/api/responsible/trip/${item.trip_id}`,
         {
           student_id: item.student_id,
           type: item.type,
