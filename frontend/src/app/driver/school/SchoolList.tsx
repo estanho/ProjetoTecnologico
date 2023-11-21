@@ -94,7 +94,7 @@ export default function App() {
       }
     } catch (error) {
       setLoading(false);
-      throw error;
+      throw new Error('Erro ao tentar acessar a API.');
     }
     setLoading(false);
   };
