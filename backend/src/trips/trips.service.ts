@@ -3,7 +3,7 @@ import { UserFromJwt } from '../auth/models/UserFromJwt';
 import { TripGenerateService } from './services/tripsGenerate.service';
 import { PrismaService } from '../database/prisma.service';
 import { TripCreateService } from './services/tripsCreate.service';
-import * as moment from 'moment';
+import moment from 'moment';
 
 @Injectable()
 export class TripsService {
