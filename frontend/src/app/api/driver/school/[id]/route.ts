@@ -118,7 +118,7 @@ export async function PATCH(request: Request) {
       throw new Error(result.data.message);
     }
   } catch (err) {
-    return NextResponse.json({ error: true });
+    return NextResponse.json({ error: true, messsage: err });
   }
 
   return NextResponse.json({ error: false });
