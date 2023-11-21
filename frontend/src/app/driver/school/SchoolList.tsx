@@ -61,7 +61,7 @@ export default function App() {
         setStarted(data.started);
         //toast.success('Lista atualizada! 😁');
       } else {
-        throw error;
+        throw new Error('Erro ao tentar buscar informações.');
       }
     } catch (error) {
       toast.error('Ocorreu um erro ao carregar os dados. 😥');
@@ -90,7 +90,7 @@ export default function App() {
       const { data } = await axios.delete(`/api/driver/school/${item.id}`);
       if (data.error === true) {
         // Tratar erro
-        throw error;
+        throw new Error('Erro ao tentar excluir informações.');
       }
     } catch (error) {
       setLoading(false);
@@ -99,8 +99,8 @@ export default function App() {
     setLoading(false);
   };
 
-  const debouncedDelete = debounce((item) => {
-    toast.promise(deleteItem(item), {
+  const debouncedDelete = debounce(async (item) => {
+    await toast.promise(deleteItem(item), {
       loading: 'Aguarde... ⏳',
       success: 'Item excluído com sucesso! 🗑️',
       error: 'Não foi possível excluir o item. 😥',
@@ -114,18 +114,18 @@ export default function App() {
       });
       if (data.error === true) {
         // Tratar erro
-        throw error;
+        throw new Error('Erro ao tentar fazer o update da informação.');
       }
     } catch (error) {
       console.log(error);
       setLoading(false);
-      throw error;
+      throw new Error('Erro ao tentar acessar a API.');
     }
     setLoading(false);
   };
 
-  const debouncedUpdateStatus = debounce((item) => {
-    toast.promise(updateStatus(item), {
+  const debouncedUpdateStatus = debounce(async (item) => {
+    await toast.promise(updateStatus(item), {
       loading: 'Aguarde... ⏳',
       success: 'Status atualizado com sucesso! 😁',
       error: 'Não foi possível atualizar o status. 😥',
