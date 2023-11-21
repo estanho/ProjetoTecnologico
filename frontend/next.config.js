@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const withPWA = require('next-pwa');
 
+const dns = require("dns");
+dns.setDefaultResultOrder("ipv4first")
+
 const nextConfig = {
   reactStrictMode: false,
   experimental: {},
