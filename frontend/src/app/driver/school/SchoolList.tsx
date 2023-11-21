@@ -114,6 +114,7 @@ export default function App() {
       });
       if (data.error === true) {
         // Tratar erro
+        console.log(data.error);
         throw new Error('Erro ao tentar fazer o update da informação.');
       }
     } catch (error) {
