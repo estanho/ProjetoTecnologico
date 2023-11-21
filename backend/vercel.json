@@ -7,6 +7,6 @@
     "routes":[{
         "src": "/(.*)",
         "dest": "dist/main.js",
-        "methods":["GET","POST","PUT","PATH","DELETE"]
+        "methods":["GET","POST","PUT","PATH","DELETE","OPTIONS"]
     }]
 }
