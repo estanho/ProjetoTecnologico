@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Body, Controller, Get, Query } from '@nestjs/common';
 import { DirectionsService } from './directions.service';
 import { IsPublic } from '../../auth/decorators/is-public.decorator';
 
@@ -11,7 +11,12 @@ export class DirectionsController {
   getDirections(
     @Query('originId') originId: string,
     @Query('destinationId') destinationId: string,
+    @Body() waypoints: any,
   ) {
-    return this.directionsService.getDirections(originId, destinationId);
+    return this.directionsService.getDirections(
+      originId,
+      destinationId,
+      waypoints,
+    );
   }
 }

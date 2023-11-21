@@ -4,144 +4,160 @@
 
 Table addresses {
   id String [pk]
-  latitude String [not null]
-  longitude String [not null]
+  place_id String [not null]
+  name String [not null]
+  latitude Float [not null]
+  longitude Float [not null]
   created_at DateTime [default: `now()`, not null]
-  updated_at DateTime [not null]
-  school schools [not null]
-  student students [not null]
+  student_id String [unique]
+  student students
+  school_address_id String [unique]
+  school_address schools
+  school_default_id String [unique]
+  school_default schools
 }
 
 Table schools {
   id String [pk]
   name String [not null]
-  morning_arrival DateTime [not null]
-  morning_departure DateTime [not null]
-  afternoon_arrival DateTime [not null]
-  afternoon_departure DateTime [not null]
-  night_arrival DateTime [not null]
-  night_departure DateTime [not null]
-  adress_id String [not null]
-  itinerary_id String [not null]
+  status Boolean [default: true]
+  morning Boolean
+  morning_arrival DateTime
+  morning_departure DateTime
+  afternoon Boolean
+  afternoon_arrival DateTime
+  afternoon_departure DateTime
+  night Boolean
+  night_arrival DateTime
+  night_departure DateTime
   created_at DateTime [default: `now()`, not null]
-  updated_at DateTime [not null]
-  adress addresses [not null]
-  itinerary itineraries [not null]
+  address addresses
+  default_location addresses
+  driver_id String
+  driver drivers
+  itineraries_morning itineraries [not null]
+  itineraries_afternoon itineraries [not null]
+  itineraries_night itineraries [not null]
   student students [not null]
 }
 
 Table users {
   id String [pk]
   email String [unique, not null]
-  name String [not null]
-  cellphone String [not null]
-  code String [not null]
+  name String
+  cellphone String
+  role Role
+  first_login Boolean [not null, default: true]
   created_at DateTime [default: `now()`, not null]
-  driver_id String [not null]
-  responsible_id String [not null]
-  role_id String [not null]
-  type String [not null]
-  updated_at DateTime [not null]
-  driver drivers [not null]
-  responsible responsibles [not null]
-  role roles [not null]
-}
-
-Table roles {
-  id String [pk]
-  name String [not null]
-  created_at DateTime [default: `now()`, not null]
-  updated_at DateTime [not null]
-  user users [not null]
+  driver drivers
+  student students
+  responsible responsibles
+  notification notifications [not null]
+  users users [not null]
 }
 
 Table responsibles {
   id String [pk]
+  email String [unique, not null]
+  registered Boolean [default: false]
   created_at DateTime [default: `now()`, not null]
-  updated_at DateTime [not null]
-  user users [not null]
+  user_id String [unique]
+  user users
+  students students [not null]
+  student_absences_going students [not null]
+  student_absences_return students [not null]
 }
 
 Table students {
   id String [pk]
-  school_id String [not null]
-  adress_id String [not null]
+  code String [not null]
+  name String
+  email String [unique]
+  registered Boolean [default: false]
+  afternoon Boolean
+  morning Boolean
+  night Boolean
+  goes Boolean [default: true]
+  return Boolean [default: true]
   created_at DateTime [default: `now()`, not null]
-  updated_at DateTime [not null]
-  afternoon Boolean [not null]
-  goes Boolean [not null]
-  morning Boolean [not null]
-  night Boolean [not null]
-  return Boolean [not null]
-  student_itinerary student_itineraries [not null]
-  student_trip student_trips [not null]
-  adress addresses [not null]
-  school schools [not null]
+  address addresses
+  school_id String
+  school schools
+  driver_id String
+  driver drivers
+  user_id String [unique]
+  user users
+  responsibles responsibles [not null]
+  student_trip students_trips [not null]
+  responsible_absence_going_id String
+  responsible_absence_going responsibles
+  responsible_absence_return_id String
+  responsible_absence_return responsibles
 }
 
 Table drivers {
   id String [pk]
+  cnh String [not null]
   created_at DateTime [default: `now()`, not null]
-  updated_at DateTime [not null]
-  itinerary_id String [not null]
   itinerary itineraries [not null]
+  school schools [not null]
+  student students [not null]
+  user_id String [unique, not null]
   user users [not null]
 }
 
 Table itineraries {
   id String [pk]
-  monday Boolean [not null]
-  tuesday Boolean [not null]
-  wednesday Boolean [not null]
-  thursday Boolean [not null]
-  friday Boolean [not null]
-  saturday Boolean [not null]
-  morning Boolean [not null]
-  afternoon Boolean [not null]
-  night Boolean [not null]
+  day DateTime [not null]
+  started Boolean [default: false]
   created_at DateTime [default: `now()`, not null]
-  updated_at DateTime [not null]
+  driver_id String [not null]
   driver drivers [not null]
-  school schools [not null]
-  student_Itinerary student_itineraries [not null]
-  trip trips [not null]
-}
-
-Table student_itineraries {
-  student_id String [not null]
-  itinerary_id String [not null]
-  created_at DateTime [default: `now()`, not null]
-  updated_at DateTime [not null]
-  itinerary itineraries [not null]
-  student students [not null]
-
-  indexes {
-    (student_id, itinerary_id) [pk]
-  }
+  school_morning_id String
+  school_morning schools
+  school_afternoon_id String
+  school_afternoon schools
+  school_night_id String
+  school_night schools
+  trips trips [not null]
 }
 
 Table trips {
   id String [pk]
-  path Json [not null]
-  started_at DateTime [not null]
-  finished_at DateTime [not null]
+  shift Shift [not null]
+  type TypeTrip [not null]
+  path Json
+  duration Float
+  km Float
+  estimated DateTime
+  started_at DateTime
+  finished_at DateTime
   created_at DateTime [default: `now()`, not null]
-  updated_at DateTime [not null]
   itinerary_id String [not null]
-  student_trip student_trips [not null]
-  Itinerary itineraries [not null]
+  itinerary itineraries
+  student_trips students_trips [not null]
 }
 
-Table student_trips {
+Table students_trips {
   id String [pk]
-  embarked_at DateTime [not null]
-  disembarked_at DateTime [not null]
-  student_id String [not null]
-  trip_id String [not null]
+  order Int
+  absent Boolean
+  type TypeTripStudent
+  time DateTime
   created_at DateTime [default: `now()`, not null]
-  updated_at DateTime [not null]
-  student students [not null]
-  trip trips [not null]
+  student_id String
+  student students
+  trip_id String
+  trip trips
+}
+
+Table notifications {
+  id String [pk]
+  name String [not null]
+  type String [not null]
+  created_at DateTime [default: `now()`, not null]
+  user_id String [not null]
+  user users [not null]
 }
 
 Table routes {
@@ -155,7 +171,6 @@ Table routes {
   destination_id String [not null]
   destination places [not null]
   created_at DateTime [default: `now()`, not null]
-  updated_at DateTime [not null]
 }
 
 Table places {
@@ -168,32 +183,315 @@ Table places {
   destination routes [not null]
 }
 
-Ref: schools.adress_id > addresses.id
+Table audit_log_entries {
+  instance_id String
+  id String [pk]
+  payload Json
+  created_at DateTime
+  ip_address String [not null, default: '']
+}
 
-Ref: schools.itinerary_id > itineraries.id
+Table flow_state {
+  id String [pk]
+  user_id String
+  auth_code String [not null]
+  code_challenge_method code_challenge_method [not null]
+  code_challenge String [not null]
+  provider_type String [not null]
+  provider_access_token String
+  provider_refresh_token String
+  created_at DateTime
+  updated_at DateTime
+  authentication_method String [not null]
+  saml_relay_states saml_relay_states [not null]
+}
 
-Ref: users.driver_id > drivers.id
+Table identities {
+  id String [not null]
+  user_id String [not null]
+  identity_data Json [not null]
+  provider String [not null]
+  last_sign_in_at DateTime
+  created_at DateTime
+  updated_at DateTime
+  email String
+  users users [not null]
 
-Ref: users.responsible_id > responsibles.id
+  indexes {
+    (provider, id) [pk]
+  }
+}
 
-Ref: users.role_id > roles.id
+Table instances {
+  id String [pk]
+  uuid String
+  raw_base_config String
+  created_at DateTime
+  updated_at DateTime
+}
 
-Ref: students.adress_id > addresses.id
+Table mfa_amr_claims {
+  session_id String [not null]
+  created_at DateTime [not null]
+  updated_at DateTime [not null]
+  authentication_method String [not null]
+  id String [pk]
+  sessions sessions [not null]
 
-Ref: students.school_id > schools.id
+  indexes {
+    (session_id, authentication_method) [unique]
+  }
+}
 
-Ref: drivers.itinerary_id > itineraries.id
+Table mfa_challenges {
+  id String [pk]
+  factor_id String [not null]
+  created_at DateTime [not null]
+  verified_at DateTime
+  ip_address String [not null]
+  mfa_factors mfa_factors [not null]
+}
 
-Ref: student_itineraries.itinerary_id > itineraries.id
+Table mfa_factors {
+  id String [pk]
+  user_id String [not null]
+  friendly_name String
+  factor_type factor_type [not null]
+  status factor_status [not null]
+  created_at DateTime [not null]
+  updated_at DateTime [not null]
+  secret String
+  mfa_challenges mfa_challenges [not null]
+  users users [not null]
+}
 
-Ref: student_itineraries.student_id > students.id
+Table refresh_tokens {
+  instance_id String
+  id BigInt [pk, increment]
+  token String [unique]
+  user_id String
+  revoked Boolean
+  created_at DateTime
+  updated_at DateTime
+  parent String
+  session_id String
+  sessions sessions
+}
 
-Ref: trips.itinerary_id > itineraries.id
+Table saml_providers {
+  id String [pk]
+  sso_provider_id String [not null]
+  entity_id String [unique, not null]
+  metadata_xml String [not null]
+  metadata_url String
+  attribute_mapping Json
+  created_at DateTime
+  updated_at DateTime
+  sso_providers sso_providers [not null]
+}
 
-Ref: student_trips.student_id > students.id
+Table saml_relay_states {
+  id String [pk]
+  sso_provider_id String [not null]
+  request_id String [not null]
+  for_email String
+  redirect_to String
+  from_ip_address String
+  created_at DateTime
+  updated_at DateTime
+  flow_state_id String
+  flow_state flow_state
+  sso_providers sso_providers [not null]
+}
 
-Ref: student_trips.trip_id > trips.id
+Table schema_migrations {
+  version String [pk]
+}
+
+Table sessions {
+  id String [pk]
+  user_id String [not null]
+  created_at DateTime
+  updated_at DateTime
+  factor_id String
+  aal aal_level
+  not_after DateTime
+  mfa_amr_claims mfa_amr_claims [not null]
+  refresh_tokens refresh_tokens [not null]
+  users users [not null]
+}
+
+Table sso_domains {
+  id String [pk]
+  sso_provider_id String [not null]
+  domain String [not null]
+  created_at DateTime
+  updated_at DateTime
+  sso_providers sso_providers [not null]
+}
+
+Table sso_providers {
+  id String [pk]
+  resource_id String
+  created_at DateTime
+  updated_at DateTime
+  saml_providers saml_providers [not null]
+  saml_relay_states saml_relay_states [not null]
+  sso_domains sso_domains [not null]
+}
+
+Table users {
+  instance_id String
+  id String [pk]
+  aud String
+  role String
+  email String
+  encrypted_password String
+  email_confirmed_at DateTime
+  invited_at DateTime
+  confirmation_token String
+  confirmation_sent_at DateTime
+  recovery_token String
+  recovery_sent_at DateTime
+  email_change_token_new String
+  email_change String
+  email_change_sent_at DateTime
+  last_sign_in_at DateTime
+  raw_app_meta_data Json
+  raw_user_meta_data Json
+  is_super_admin Boolean
+  created_at DateTime
+  updated_at DateTime
+  phone String [unique]
+  phone_confirmed_at DateTime
+  phone_change String [default: '']
+  phone_change_token String [default: '']
+  phone_change_sent_at DateTime
+  confirmed_at DateTime
+  email_change_token_current String [default: '']
+  email_change_confirm_status Int [default: 0]
+  banned_until DateTime
+  reauthentication_token String [default: '']
+  reauthentication_sent_at DateTime
+  is_sso_user Boolean [not null, default: false]
+  deleted_at DateTime
+  identities identities [not null]
+  mfa_factors mfa_factors [not null]
+  sessions sessions [not null]
+  users users
+}
+
+Enum Role {
+  StudentRole
+  ResponsibleRole
+  DriverRole
+}
+
+Enum Shift {
+  morning
+  morning_afternoon
+  afternoon
+  afternoon_night
+  night
+}
+
+Enum TypeTrip {
+  going_morning
+  return_morning
+  going_afternoon_return_morning
+  going_afternoon
+  return_afternoon
+  going_night_return_afternoon
+  going_night
+  return_night
+}
+
+Enum TypeTripStudent {
+  going
+  return
+}
+
+Enum aal_level {
+  aal1
+  aal2
+  aal3
+}
+
+Enum code_challenge_method {
+  s256
+  plain
+}
+
+Enum factor_status {
+  unverified
+  verified
+}
+
+Enum factor_type {
+  totp
+  webauthn
+}
+
+Ref: addresses.student_id - students.id [delete: Cascade]
+
+Ref: addresses.school_address_id - schools.id [delete: Cascade]
+
+Ref: addresses.school_default_id - schools.id [delete: Cascade]
+
+Ref: schools.driver_id > drivers.id
+
+Ref: users.id - users.id [delete: Cascade]
+
+Ref: responsibles.user_id - users.id [delete: Cascade]
+
+Ref: students.school_id > schools.id [delete: Set Null]
+
+Ref: students.driver_id > drivers.id [delete: Cascade]
+
+Ref: students.user_id - users.id [delete: Cascade]
+
+Ref: students.responsible_absence_going_id > responsibles.id
+
+Ref: students.responsible_absence_return_id > responsibles.id
+
+Ref: drivers.user_id - users.id [delete: Cascade]
+
+Ref: itineraries.driver_id > drivers.id [delete: Cascade]
+
+Ref: itineraries.school_morning_id > schools.id [delete: Set Null]
+
+Ref: itineraries.school_afternoon_id > schools.id [delete: Set Null]
+
+Ref: itineraries.school_night_id > schools.id [delete: Set Null]
+
+Ref: trips.itinerary_id > itineraries.id [delete: Cascade]
+
+Ref: students_trips.student_id > students.id [delete: Cascade]
+
+Ref: students_trips.trip_id > trips.id [delete: Cascade]
+
+Ref: notifications.user_id > users.id
 
 Ref: routes.source_id > places.id
 
 Ref: routes.destination_id > places.id
+
+Ref: identities.user_id > users.id [delete: Cascade]
+
+Ref: mfa_amr_claims.session_id > sessions.id [delete: Cascade]
+
+Ref: mfa_challenges.factor_id > mfa_factors.id [delete: Cascade]
+
+Ref: mfa_factors.user_id > users.id [delete: Cascade]
+
+Ref: refresh_tokens.session_id > sessions.id [delete: Cascade]
+
+Ref: saml_providers.sso_provider_id > sso_providers.id [delete: Cascade]
+
+Ref: saml_relay_states.flow_state_id > flow_state.id [delete: Cascade]
+
+Ref: saml_relay_states.sso_provider_id > sso_providers.id [delete: Cascade]
+
+Ref: sessions.user_id > users.id [delete: Cascade]
+
+Ref: sso_domains.sso_provider_id > sso_providers.id [delete: Cascade]

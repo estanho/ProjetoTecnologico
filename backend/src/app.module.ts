@@ -5,17 +5,37 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { PrismaModule } from './database/prisma.module';
-import { RoutesModule } from './routes/routes.module';
 import { MapsModule } from './maps/maps.module';
+import { SchoolModule } from './school/school.module';
+import { StudentModule } from './student/student.module';
+import { ItinerariesModule } from './itineraries/itineraries.module';
+import { TripsModule } from './trips/trips.module';
+import { RolesGuard } from './auth/guards/roles.guard';
+import { ScheduleModule } from '@nestjs/schedule';
+import { CronModule } from './cron/cron.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, RoutesModule, MapsModule],
+  imports: [
+    PrismaModule,
+    AuthModule,
+    MapsModule,
+    SchoolModule,
+    StudentModule,
+    ItinerariesModule,
+    TripsModule,
+    CronModule,
+    ScheduleModule.forRoot(),
+  ],
   controllers: [AppController],
   providers: [
     AppService,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
     },
   ],
 })
