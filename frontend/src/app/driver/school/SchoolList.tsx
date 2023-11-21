@@ -114,10 +114,10 @@ export default function App() {
       });
       if (data.error === true) {
         // Tratar erro
-        console.log(error);
         throw error;
       }
     } catch (error) {
+      console.log(error);
       setLoading(false);
       throw error;
     }
