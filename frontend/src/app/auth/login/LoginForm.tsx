@@ -11,18 +11,9 @@ import {
 } from '@nextui-org/react';
 import Messages from '../../../components/Messages';
 import { useSupabase } from '../../ProviderSupabase';
-import { useRouter } from 'next/navigation';
 
 export default function SignupForm() {
   const { supabase } = useSupabase();
-
-  const router = useRouter();
-
-  supabase.auth.onAuthStateChange(async (event) => {
-    if (event == 'SIGNED_IN') {
-      router.push('/teste');
-    }
-  });
 
   return (
     <div className="flex items-center justify-center h-screen">
