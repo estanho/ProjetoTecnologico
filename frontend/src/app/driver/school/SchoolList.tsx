@@ -25,7 +25,6 @@ import { DeleteIcon } from '../../../components/icons/DeleteIcon';
 import SchoolForm from './SchoolForm';
 import toast from 'react-hot-toast';
 import axios from 'axios';
-import error from 'next/error';
 
 const columns = [
   { name: 'STATUS', uid: 'status' },
