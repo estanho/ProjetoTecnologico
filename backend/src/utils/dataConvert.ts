@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import moment from 'moment';
 
 export function stringToDate(data: any) {
   if ('morning_arrival' in data && data.morning_arrival !== null) {
