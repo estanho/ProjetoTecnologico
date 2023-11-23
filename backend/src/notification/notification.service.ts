@@ -56,7 +56,7 @@ export class NotificationService {
 
       for (let i = 0; i < subscriptions.length; i++) {
         await WebPush.sendNotification(
-          JSON.parse(JSON.stringify(subscriptions[0].subscription)),
+          JSON.parse(JSON.stringify(subscriptions[i].subscription)),
           'HELLO DO BACKEND',
         );
       }
