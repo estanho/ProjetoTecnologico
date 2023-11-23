@@ -13,6 +13,7 @@ import { TripsModule } from './trips/trips.module';
 import { RolesGuard } from './auth/guards/roles.guard';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CronModule } from './cron/cron.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { CronModule } from './cron/cron.module';
     TripsModule,
     CronModule,
     ScheduleModule.forRoot(),
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [

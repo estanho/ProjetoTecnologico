@@ -124,7 +124,8 @@ model Public_User {
   student     Student?
   responsible Responsible?
 
-  notification Notifications[]
+  notification              Notification[]
+  notification_subscription Notification_Subscription[]
 
   users auth_users @relation(fields: [id], references: [id], onDelete: Cascade)
 
@@ -267,15 +268,28 @@ model Student_Trip {
   @@schema("public")
 }
 
-model Notifications {
-  id   String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name String
-  type String
+model Notification_Subscription {
+  id           String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  subscription Json?
 
   created_at DateTime @default(now())
 
-  user_id String      @db.Uuid
-  user    Public_User @relation(fields: [user_id], references: [id])
+  user_id String?      @db.Uuid
+  user    Public_User? @relation(fields: [user_id], references: [id])
+
+  @@map("notifications_subscriptions")
+  @@schema("public")
+}
+
+model Notification {
+  id   String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name String?
+  type String?
+
+  created_at DateTime @default(now())
+
+  user_id String?      @db.Uuid
+  user    Public_User? @relation(fields: [user_id], references: [id])
 
   @@map("notifications")
   @@schema("public")

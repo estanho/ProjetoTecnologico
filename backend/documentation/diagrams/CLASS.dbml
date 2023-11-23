@@ -53,6 +53,7 @@ Table users {
   student students
   responsible responsibles
   notification notifications [not null]
+  notification_subscription notifications_subscriptions [not null]
   users users [not null]
 }
 
@@ -151,13 +152,21 @@ Table students_trips {
   trip trips
 }
 
+Table notifications_subscriptions {
+  id String [pk]
+  subscription Json
+  created_at DateTime [default: `now()`, not null]
+  user_id String
+  user users
+}
+
 Table notifications {
   id String [pk]
-  name String [not null]
-  type String [not null]
+  name String
+  type String
   created_at DateTime [default: `now()`, not null]
-  user_id String [not null]
-  user users [not null]
+  user_id String
+  user users
 }
 
 Table audit_log_entries {
@@ -446,6 +455,8 @@ Ref: trips.itinerary_id > itineraries.id [delete: Cascade]
 Ref: students_trips.student_id > students.id [delete: Cascade]
 
 Ref: students_trips.trip_id > trips.id [delete: Cascade]
+
+Ref: notifications_subscriptions.user_id > users.id
 
 Ref: notifications.user_id > users.id
 

@@ -165,10 +165,17 @@ webauthn webauthn
     }
   
 
+  "notifications_subscriptions" {
+    String id "🗝️"
+    Json subscription "❓"
+    DateTime created_at 
+    }
+  
+
   "notifications" {
     String id "🗝️"
-    String name 
-    String type 
+    String name "❓"
+    String type "❓"
     DateTime created_at 
     }
   
@@ -361,6 +368,7 @@ webauthn webauthn
     "users" o{--}o "students" : "student"
     "users" o{--}o "responsibles" : "responsible"
     "users" o{--}o "notifications" : "notification"
+    "users" o{--}o "notifications_subscriptions" : "notification_subscription"
     "users" o|--|| "users" : "users"
     "responsibles" o|--|o "users" : "user"
     "responsibles" o{--}o "students" : "students"
@@ -390,7 +398,8 @@ webauthn webauthn
     "students_trips" o|--|o "TypeTripStudent" : "enum:type"
     "students_trips" o|--|o "students" : "student"
     "students_trips" o|--|o "trips" : "trip"
-    "notifications" o|--|| "users" : "user"
+    "notifications_subscriptions" o|--|o "users" : "user"
+    "notifications" o|--|o "users" : "user"
     "flow_state" o|--|| "code_challenge_method" : "enum:code_challenge_method"
     "flow_state" o{--}o "saml_relay_states" : "saml_relay_states"
     "identities" o|--|| "users" : "users"
