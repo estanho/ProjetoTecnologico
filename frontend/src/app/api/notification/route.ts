@@ -9,12 +9,15 @@ export async function GET() {
   const { data } = await supabase.auth.getSession();
 
   let error = false;
+  let publicKey;
 
   try {
     const config = {
       headers: { Authorization: `Bearer ${data.session?.access_token}` },
     };
-    await axios.get(`${process.env.API_URL}/notification/public_key`, config);
+    const result = await axios.get(`${process.env.API_URL}/notification/public_key`, config);
+    publicKey = result.data.publicKey;
+
   } catch (err) {
     error = true;
   }
@@ -23,7 +26,7 @@ export async function GET() {
     return NextResponse.json({ error: true });
   }
 
-  return NextResponse.json({ error: false });
+  return NextResponse.json({ error: false, publicKey });
 }
 
 export async function POST(request: Request) {
