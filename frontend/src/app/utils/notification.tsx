@@ -10,25 +10,18 @@ export function Notification({ session }: any) {
       navigator.serviceWorker.register('service-worker.js')
         .then(async serviceWorker => {
           let subscription = await serviceWorker.pushManager.getSubscription();
-
-          const config = {
-            headers: { Authorization: `Bearer ${session.access_token}` },
-          };
     
           if (!subscription) {
-    
-            const publicKeyResponse = await axios.get('http://localhost:3001/notification/public_key', config);
+            // Public Key
+            const publicKeyResponse = await axios.get('/api/notification');
     
             subscription = await serviceWorker.pushManager.subscribe({
               userVisibleOnly: true,
               applicationServerKey: publicKeyResponse.data.publicKey,
             })
           }
-
-          await axios.post('http://localhost:3001/notification/register', 
-            subscription,
-            config,
-          );
+          // Register
+          await axios.post('/api/notification', subscription);
       });
     }
   }, []);
