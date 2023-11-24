@@ -177,6 +177,7 @@ model Student {
 
   responsibles Responsible[]
   student_trip Student_Trip[]
+  notification Notification[]
 
   responsible_absence_going_id String?      @db.Uuid
   responsible_absence_going    Responsible? @relation("authorized_absence_going", fields: [responsible_absence_going_id], references: [id])
@@ -251,12 +252,13 @@ model Trip {
 }
 
 model Student_Trip {
-  id         String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  order      Int?
-  absent     Boolean?
-  type       TypeTripStudent?
-  time       DateTime?
-  created_at DateTime         @default(now())
+  id               String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  order            Int?
+  responsible_name String?
+  absent           Boolean?
+  type             TypeTripStudent?
+  time             DateTime?
+  created_at       DateTime         @default(now())
 
   student_id String?  @db.Uuid
   student    Student? @relation(fields: [student_id], references: [id], onDelete: Cascade)
@@ -289,7 +291,10 @@ model Notification {
   created_at DateTime @default(now())
 
   user_id String?      @db.Uuid
-  user    Public_User? @relation(fields: [user_id], references: [id])
+  user    Public_User? @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  student_id String?  @db.Uuid
+  student    Student? @relation(fields: [student_id], references: [id], onDelete: Cascade)
 
   @@map("notifications")
   @@schema("public")

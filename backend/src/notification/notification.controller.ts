@@ -4,22 +4,25 @@ import { CreateNotificationDto } from './dto/create-notification.dto';
 import { NotificationService } from './notification.service';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { UserFromJwt } from '../auth/models/UserFromJwt';
-import { IsPublic } from '../auth/decorators/is-public.decorator';
 
-const publicKey =
-  'BHWg1x2gQWNNICnWbV3WtOua5XMHp_E69EOt6Qy8hXRSE4dZ81Iyo-cQgWQJo1TMUbq-NBTdEw8KUv8YyBBErH8';
-
-const privateKey = 'Uhjxjalrc-H3_U-MC95-WAMX5TwBAh-c7EhzdFo3XBE';
-
-WebPush.setVapidDetails('https://microrota.vercel.app', publicKey, privateKey);
+WebPush.setVapidDetails(
+  'https://microrota.vercel.app',
+  process.env.NOTIFICATION_PUBLIC_KEY,
+  process.env.NOTIFICATION_PRIVATE_KEY,
+);
 
 @Controller('notification')
 export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}
 
+  @Get('list')
+  list(@CurrentUser() user: UserFromJwt) {
+    return this.notificationService.getList(user);
+  }
+
   @Get('public_key')
   findAll() {
-    return { publicKey };
+    return { publicKey: process.env.NOTIFICATION_PUBLIC_KEY };
   }
 
   @Post('register')
@@ -28,11 +31,5 @@ export class NotificationController {
     @Body() body: CreateNotificationDto,
   ) {
     return this.notificationService.register(user, body);
-  }
-
-  @IsPublic()
-  @Post('send')
-  send(@Body() body: any) {
-    return this.notificationService.send(body);
   }
 }

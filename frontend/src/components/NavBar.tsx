@@ -34,7 +34,7 @@ export default function App({ user, role }: any) {
   if (role === 'ResponsibleRole') {
     menuItems = [
       { label: 'Roteiro', href: '/responsible/trips' },
-      { label: 'Notificações', href: '/responsible/trips' },
+      { label: 'Notificações', href: '/responsible/notification' },
     ];
     nameRole = 'Responsável';
   } else if (role === 'DriverRole') {
@@ -42,13 +42,13 @@ export default function App({ user, role }: any) {
       { label: 'Roteiro', href: '/driver/trips' },
       { label: 'Estudantes', href: '/driver/student' },
       { label: 'Escolas', href: '/driver/school' },
-      { label: 'Notificações', href: '/driver/trips' },
+      { label: 'Notificações', href: '/driver/notification' },
     ];
     nameRole = 'Motorista';
   } else if (role === 'StudentRole') {
     menuItems = [
       { label: 'Roteiro', href: '/student/trips' },
-      { label: 'Notificações', href: '/student/trips' },
+      { label: 'Notificações', href: '/student/notification' },
     ];
     nameRole = 'Estudante';
   }

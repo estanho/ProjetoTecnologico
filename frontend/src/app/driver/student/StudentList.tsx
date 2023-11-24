@@ -79,7 +79,7 @@ export default function App() {
     try {
       const { data } = await axios.get(`/api/driver/student`);
       if (data.error === false) {
-        setStudents(data.data);
+        setStudents(data.students);
         setStarted(data.started);
         //toast.success('Lista atualizada! 😁');
       } else {

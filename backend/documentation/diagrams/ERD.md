@@ -158,6 +158,7 @@ webauthn webauthn
   "students_trips" {
     String id "🗝️"
     Int order "❓"
+    String responsible_name "❓"
     Boolean absent "❓"
     TypeTripStudent type "❓"
     DateTime time "❓"
@@ -380,6 +381,7 @@ webauthn webauthn
     "students" o|--|o "users" : "user"
     "students" o{--}o "responsibles" : "responsibles"
     "students" o{--}o "students_trips" : "student_trip"
+    "students" o{--}o "notifications" : "notification"
     "students" o|--|o "responsibles" : "responsible_absence_going"
     "students" o|--|o "responsibles" : "responsible_absence_return"
     "drivers" o{--}o "itineraries" : "itinerary"
@@ -400,6 +402,7 @@ webauthn webauthn
     "students_trips" o|--|o "trips" : "trip"
     "notifications_subscriptions" o|--|o "users" : "user"
     "notifications" o|--|o "users" : "user"
+    "notifications" o|--|o "students" : "student"
     "flow_state" o|--|| "code_challenge_method" : "enum:code_challenge_method"
     "flow_state" o{--}o "saml_relay_states" : "saml_relay_states"
     "identities" o|--|| "users" : "users"

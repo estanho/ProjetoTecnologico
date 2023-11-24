@@ -90,6 +90,7 @@ Table students {
   user users
   responsibles responsibles [not null]
   student_trip students_trips [not null]
+  notification notifications [not null]
   responsible_absence_going_id String
   responsible_absence_going responsibles
   responsible_absence_return_id String
@@ -142,6 +143,7 @@ Table trips {
 Table students_trips {
   id String [pk]
   order Int
+  responsible_name String
   absent Boolean
   type TypeTripStudent
   time DateTime
@@ -167,6 +169,8 @@ Table notifications {
   created_at DateTime [default: `now()`, not null]
   user_id String
   user users
+  student_id String
+  student students
 }
 
 Table audit_log_entries {
@@ -458,7 +462,9 @@ Ref: students_trips.trip_id > trips.id [delete: Cascade]
 
 Ref: notifications_subscriptions.user_id > users.id
 
-Ref: notifications.user_id > users.id
+Ref: notifications.user_id > users.id [delete: Cascade]
+
+Ref: notifications.student_id > students.id [delete: Cascade]
 
 Ref: identities.user_id > users.id [delete: Cascade]
 

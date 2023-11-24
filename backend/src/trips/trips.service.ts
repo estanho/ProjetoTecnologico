@@ -4,6 +4,7 @@ import { TripGenerateService } from './services/tripsGenerate.service';
 import { PrismaService } from '../database/prisma.service';
 import { TripCreateService } from './services/tripsCreate.service';
 import moment from 'moment';
+import { NotificationLogicService } from '../notification/notificationLogic.service';
 
 @Injectable()
 export class TripsService {
@@ -11,6 +12,7 @@ export class TripsService {
     private prismaService: PrismaService,
     private readonly tripGenerateService: TripGenerateService,
     private readonly tripCreateService: TripCreateService,
+    private readonly notificationLogicService: NotificationLogicService,
   ) {}
 
   async findAllDriver(user: UserFromJwt) {
@@ -160,6 +162,7 @@ export class TripsService {
                 absent: true,
                 time: true,
                 type: true,
+                responsible_name: true,
               },
               orderBy: {
                 order: 'asc',
@@ -308,15 +311,9 @@ export class TripsService {
             }
 
             if (item.student_trips[i].absent === true) {
-              if (item.student_trips[i].type === 'going') {
-                newTrip.absents.push(
-                  `• ${item.student_trips[i].student.name} [Responsável: ${item.student_trips[i].student?.responsible_absence_going?.user?.name}]`,
-                );
-              } else if (item.student_trips[i].type === 'return') {
-                newTrip.absents.push(
-                  `• ${item.student_trips[i].student.name} [Responsável: ${item.student_trips[i].student?.responsible_absence_return?.user?.name}]`,
-                );
-              }
+              newTrip.absents.push(
+                `• ${item.student_trips[i].student.name} [Responsável: ${item.student_trips[i].responsible_name}]`,
+              );
             }
 
             if (item.student_trips[i].absent === false) {
@@ -1302,6 +1299,11 @@ export class TripsService {
         },
         select: {
           id: true,
+          user: {
+            select: {
+              name: true,
+            },
+          },
         },
       });
       if (responsible === null) {
@@ -1642,6 +1644,18 @@ export class TripsService {
       if (oldTrip === null) {
         throw new Error('oldTrip_NotDeleted');
       }
+
+      // Criando notificação
+      await this.notificationLogicService.create({
+        type:
+          data.type === 'going'
+            ? `${data.type}_${!student.goes}`
+            : `${data.type}_${!student.return}`,
+        student_id: student.id,
+        user_id: driver.user_id,
+        name: responsible.user?.name,
+        name_student: student.name,
+      });
 
       return { error: false, oldTrip };
     } catch (error) {

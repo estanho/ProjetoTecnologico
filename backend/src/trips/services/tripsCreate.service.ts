@@ -68,10 +68,42 @@ export class TripCreateService {
       }
 
       for (let i = 0; i < trip.studentsAbsent.length; i++) {
+        const student = await this.prismaService.student.findFirst({
+          where: {
+            id: trip.studentsAbsent[i].id,
+          },
+          select: {
+            responsible_absence_going: {
+              select: {
+                user: {
+                  select: {
+                    name: true,
+                  },
+                },
+              },
+            },
+            responsible_absence_return: {
+              select: {
+                user: {
+                  select: {
+                    name: true,
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        const name =
+          trip.studentsAbsent[i].type === 'going'
+            ? student.responsible_absence_going.user.name
+            : student.responsible_absence_return.user.name;
+
         await this.prismaService.student_Trip.create({
           data: {
             order: null,
             absent: true,
+            responsible_name: name,
             type: trip.studentsAbsent[i].type === 'going' ? 'going' : 'return',
             trip: {
               connect: {

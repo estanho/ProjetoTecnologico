@@ -27,7 +27,7 @@ export async function GET() {
     return NextResponse.json({ error: true });
   }
 
-  return NextResponse.json({ error: false, data: students, started });
+  return NextResponse.json({ error: false, students, started });
 }
 
 export async function POST(request: Request) {
