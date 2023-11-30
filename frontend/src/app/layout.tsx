@@ -4,6 +4,9 @@ import { Toaster } from 'react-hot-toast';
 import { Providers as ProviderNextUI } from './ProviderNextUI';
 import SupabaseProvider from './ProviderSupabase';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export const metadata = {
   title: 'MicroRota',
   description: 'Plataforma para auxílio no transporte de vans e micro-ônibus',
