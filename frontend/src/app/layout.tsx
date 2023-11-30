@@ -1,5 +1,3 @@
-export const dynamic = 'force-dynamic';
-
 import './globals.css';
 import { Toaster } from 'react-hot-toast';
 
