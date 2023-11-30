@@ -1,7 +1,7 @@
-import Map from './Map';
-import NavBar from '../../../components/NavBar';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
+import Map from './Map';
+import NavBar from '../../../components/NavBar';
 
 export default async function NewRoutePage() {
   const supabase = createServerComponentClient({ cookies });
