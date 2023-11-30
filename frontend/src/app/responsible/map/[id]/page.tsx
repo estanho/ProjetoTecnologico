@@ -1,17 +1,12 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import Map from './Map';
 import NavBar from '../../../../components/NavBar';
-
-export const dynamic = 'force-dynamic';
+import supabaseServer from '../../../utils/supabaseServer';
 
 export default async function NewRoutePage({ params }: any) {
-  const supabase = createServerComponentClient({ cookies });
-
   const {
     data: { session },
-  } = await supabase.auth.getSession();
+  } = await supabaseServer().auth.getSession();
 
   if (!session) {
     return redirect('/auth/login');
