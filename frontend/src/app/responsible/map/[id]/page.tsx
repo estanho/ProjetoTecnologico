@@ -4,7 +4,7 @@ import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-static';
 
 export default async function NewRoutePage({ params }: any) {
   const supabase = createServerComponentClient({ cookies });
