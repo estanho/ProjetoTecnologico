@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import Map from './Map';
 import NavBar from '../../../components/NavBar';
-import { createServerSupabaseClient } from '../../utils/supabaseServer';
+import { createServerSupabaseClient } from '../../../components/supabaseServer';
 
 export default async function NewRoutePage() {
   const {

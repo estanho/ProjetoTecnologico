@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import NavBar from '../../../components/NavBar';
 import RollCallList from './rollCallList';
-import { createServerSupabaseClient } from '../../utils/supabaseServer';
+import { createServerSupabaseClient } from '../../../components/supabaseServer';
 
 export default async function Index() {
   const {

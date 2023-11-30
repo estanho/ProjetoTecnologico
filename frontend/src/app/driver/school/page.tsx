@@ -1,6 +1,6 @@
 import NavBar from '../../../components/NavBar';
 import SchoolList from './SchoolList';
-import { createServerSupabaseClient } from '../../utils/supabaseServer';
+import { createServerSupabaseClient } from '../../../components/supabaseServer';
 import { redirect } from 'next/navigation';
 
 export default async function Index() {
