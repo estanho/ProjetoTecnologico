@@ -128,12 +128,15 @@ Table trips {
   id String [pk]
   shift Shift [not null]
   type TypeTrip [not null]
-  path Json
+  path String
   duration Float
   km Float
   estimated DateTime
   started_at DateTime
   finished_at DateTime
+  rollCall Boolean
+  latitude Float
+  longitude Float
   created_at DateTime [default: `now()`, not null]
   itinerary_id String [not null]
   itinerary itineraries
@@ -148,6 +151,7 @@ Table students_trips {
   type TypeTripStudent
   time DateTime
   created_at DateTime [default: `now()`, not null]
+  rollCallPresent Boolean [default: false]
   student_id String
   student students
   trip_id String
@@ -428,7 +432,7 @@ Ref: addresses.school_address_id - schools.id [delete: Cascade]
 
 Ref: addresses.school_default_id - schools.id [delete: Cascade]
 
-Ref: schools.driver_id > drivers.id
+Ref: schools.driver_id > drivers.id [delete: Cascade]
 
 Ref: users.id - users.id [delete: Cascade]
 
@@ -460,7 +464,7 @@ Ref: students_trips.student_id > students.id [delete: Cascade]
 
 Ref: students_trips.trip_id > trips.id [delete: Cascade]
 
-Ref: notifications_subscriptions.user_id > users.id
+Ref: notifications_subscriptions.user_id > users.id [delete: Cascade]
 
 Ref: notifications.user_id > users.id [delete: Cascade]
 

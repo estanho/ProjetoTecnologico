@@ -23,7 +23,6 @@ export class StudentService {
           id: true,
         },
       });
-
       if (driver === null) {
         throw new Error('no_driver');
       }
@@ -49,10 +48,6 @@ export class StudentService {
           id: true,
         },
       });
-
-      if (student === null) {
-        throw new Error('student_Not_Created');
-      }
 
       const trips = await this.tripsLogicService.create(user);
 
@@ -99,7 +94,7 @@ export class StudentService {
         }
       }
 
-      return { error: false, student };
+      return { error: false };
     } catch (error) {
       return { error: true, message: error.message };
     }
@@ -116,12 +111,11 @@ export class StudentService {
           id: true,
         },
       });
-
       if (driver === null) {
         throw new Error('no_driver');
       }
 
-      // Pegando itinerario atual
+      // Pegando o itinerario atual
       const itinerary = await this.prismaService.itinerary.findFirst({
         where: {
           driver: {
@@ -316,7 +310,10 @@ export class StudentService {
         result.push(newItem);
       });
 
-      return { error: false, students: result, started: itinerary?.started };
+      const started =
+        itinerary?.started === undefined ? false : itinerary.started;
+
+      return { error: false, students: result, started };
     } catch (error) {
       return { error: true, message: error, started: false };
     }
@@ -328,6 +325,7 @@ export class StudentService {
     updateStudentDto: UpdateStudentDto,
   ) {
     try {
+      // Verificando Driver
       const driver = await this.prismaService.driver.findFirst({
         where: {
           user_id: user.id,
@@ -336,7 +334,6 @@ export class StudentService {
           id: true,
         },
       });
-
       if (driver === null) {
         throw new Error('no_driver');
       }
@@ -366,10 +363,6 @@ export class StudentService {
         },
       });
 
-      if (student === null) {
-        throw new Error('student_Not_Updated');
-      }
-
       const trips = await this.tripsLogicService.create(user);
 
       if (trips.error === true) {
@@ -381,6 +374,7 @@ export class StudentService {
             id: student.id,
           },
         });
+
         throw new Error('trips_error');
       }
 
@@ -407,17 +401,16 @@ export class StudentService {
               email: newEmail,
             },
           });
-
+        // Se o responsável não existe, cria um novo
         if (!existingResponsible) {
-          // Se o responsável não existe, cria um novo
           await this.prismaService.responsible.create({
             data: {
               email: newEmail,
               students: { connect: { id: student.id } },
             },
           });
-        } else {
           // Se o responsável já existe, conecta
+        } else {
           await this.prismaService.student.update({
             where: { id: student.id },
             data: {
@@ -439,7 +432,7 @@ export class StudentService {
         });
       }
 
-      return { error: false, student };
+      return { error: false };
     } catch (error) {
       return { error: true, message: error.message };
     }
@@ -456,7 +449,6 @@ export class StudentService {
           id: true,
         },
       });
-
       if (driver === null) {
         throw new Error('no_driver');
       }
@@ -474,8 +466,8 @@ export class StudentService {
         },
       });
 
+      // Deletando usuario
       if (student.user_id !== null) {
-        // Deletando usuario
         await this.prismaService.auth_users.delete({
           where: {
             id: student.user_id,
@@ -489,7 +481,7 @@ export class StudentService {
         throw new Error('trips_error');
       }
 
-      return { error: false, student };
+      return { error: false };
     } catch (error) {
       return { error: true, message: error.message };
     }

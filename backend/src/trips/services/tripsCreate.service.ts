@@ -18,6 +18,7 @@ export class TripCreateService {
     try {
       const newTrip = await this.prismaService.trip.create({
         data: {
+          rollCall: type.includes('return'),
           path: JSON.stringify(trip.directions),
           shift: converterStringParaShift(shift),
           type: converterStringParaType(type),

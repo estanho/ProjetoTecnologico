@@ -142,8 +142,8 @@ export default function AccountForm({ user }: any) {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen">
-      <Card className="max-w-xl w-full p-6">
+    <div className="flex items-center justify-center h-screen mt-20">
+      <Card className="max-w-md w-full p-6">
         <CardHeader className="justify-center">
           <p className="text-xl">Atualize suas informações</p>
         </CardHeader>

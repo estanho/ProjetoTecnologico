@@ -21,7 +21,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import axios from 'axios';
-import error from 'next/error';
+import { errorControl } from '../../utils/warnings';
 
 const isEmail = (value: any) => {
   return /^([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(,\s([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}))*$/.test(
@@ -67,14 +67,12 @@ const schemaData = z
       return errors.length === 0;
     },
     {
-      message: 'Email inválido',
+      message: 'Email inválido. Por favor insira o e-mail novamente.',
       path: ['shift'],
     },
   );
 
 type dataType = z.infer<typeof schemaData>;
-
-const libraries = ['places'];
 
 type locationType = {
   place_id: string;
@@ -97,6 +95,8 @@ type schoolType = {
   night_arrival: string | null;
   night_departure: string | null;
 };
+
+const libraries = ['places'];
 
 export default function StudentForm({ student, started }: any) {
   const { isLoaded } = useJsApiLoader({
@@ -144,8 +144,10 @@ export default function StudentForm({ student, started }: any) {
   const getSchools = useCallback(async () => {
     try {
       const { data } = await axios.get(`/api/driver/school`);
+
       if (data.error === false) {
         setSchools(data.schools);
+
         if (student !== null) {
           if (data.schools.length > 0) {
             const foundSchool = data.schools.find(
@@ -155,12 +157,12 @@ export default function StudentForm({ student, started }: any) {
           }
         }
       } else {
-        throw error;
+        errorControl(data.message);
       }
     } catch (error) {
-      console.log(error);
       toast.error('Ocorreu um erro ao carregar as escolas. 😥');
     }
+    setLoading(false);
   }, [student]);
 
   const getItem = useCallback(async () => {
@@ -178,14 +180,13 @@ export default function StudentForm({ student, started }: any) {
         setResponsibles_email(student.responsibles_email);
         setSchool(student.school_id);
       }
-      //
     } catch (error) {
       toast.error('Ocorreu um erro ao carregar os dados. 😥');
-    } finally {
-      setLoading(false);
     }
+    setLoading(false);
   }, [student]);
 
+  // Atualizando informações
   useEffect(() => {
     getSchools();
     getItem();
@@ -196,6 +197,7 @@ export default function StudentForm({ student, started }: any) {
       if (started === false) {
         setLoading(true);
         let result;
+
         if (student === null) {
           result = await axios.post('/api/driver/student', data);
         } else {
@@ -206,10 +208,9 @@ export default function StudentForm({ student, started }: any) {
         }
 
         if (result.data.error === false) {
-          setLoading(false);
           toast.success('Aluno cadastrado com sucesso! 😁');
         } else {
-          throw error;
+          errorControl(result.data.message);
         }
       }
     } catch (error) {
@@ -270,9 +271,9 @@ export default function StudentForm({ student, started }: any) {
             <Input
               type="email"
               variant="faded"
-              label="Email Aluno"
+              label="E-mail Aluno"
               labelPlacement="outside"
-              placeholder="Email do Aluno"
+              placeholder="E-mail do Aluno"
               className="mb-6"
               value={student && student.email ? student.email : ''}
               isDisabled={true}
@@ -314,7 +315,7 @@ export default function StudentForm({ student, started }: any) {
               variant="faded"
               label="Responsáveis"
               labelPlacement="outside"
-              placeholder="Digite o email dos responsáveis (Opcional)"
+              placeholder="Digite os e-mails dos responsáveis (Opcional)"
               className="mb-6"
               onChange={(e) => setResponsibles_email(e.target.value)}
               errorMessage={
@@ -322,8 +323,8 @@ export default function StudentForm({ student, started }: any) {
               }
             />
 
-            <p className="font-semibold">Turnos</p>
-            <div className="p-2 mb-6">
+            <p className="mb-4 font-semibold">Turnos</p>
+            <div className="mb-6">
               <RadioGroup
                 orientation="horizontal"
                 isDisabled={!school}

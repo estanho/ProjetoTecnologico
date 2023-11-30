@@ -9,67 +9,63 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  useDisclosure,
   Switch,
+  Button,
 } from '@nextui-org/react';
 import toast from 'react-hot-toast';
 import axios from 'axios';
+import { errorControl } from '../../utils/warnings';
+import { useRouter } from 'next/navigation';
 
 const columns = [
-  { name: 'STATUS', uid: 'status' },
+  { name: 'PRESENTE', uid: 'status' },
   { name: 'NOME', uid: 'name' },
 ];
 
-type schoolType = {
+type studentTripType = {
   id: string;
   name: string;
-  address: string;
-  status: boolean;
-  shift: string;
-  arrival_time: string | null;
-  departure_time: string | null;
+  rollCallPresent: boolean;
 };
 
 export default function App() {
-  const [loading, setLoading] = useState(false);
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [started, setStarted] = useState(false);
+  const router = useRouter();
 
-  const [school, setSchool] = useState<schoolType | null>();
-  const [schools, setSchools] = useState<schoolType[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [studentsTrips, setStudentsTrips] = useState<studentTripType[]>([]);
+  const [allPresents, setAllPresents] = useState(false);
 
   const getList = useCallback(async () => {
     try {
-      const { data } = await axios.get(`/api/driver/school`);
+      const { data } = await axios.get(`/api/driver/rollcall`);
+
       if (data.error === false) {
-        setSchools(data.schools);
-        setStarted(data.started);
-        //toast.success('Lista atualizada! 😁');
+        setStudentsTrips(data.studentTrip);
       } else {
-        throw new Error('Erro ao tentar buscar informações.');
+        errorControl(data.message);
       }
     } catch (error) {
       toast.error('Ocorreu um erro ao carregar os dados. 😥');
     }
-  }, [setSchools, setStarted]);
+  }, [setStudentsTrips]);
 
+  // Atualização da lista
   useEffect(() => {
     getList();
   }, [getList, loading]);
 
   const updateStatus = async (item: any) => {
     try {
-      const { data } = await axios.patch(`/api/driver/school/${item.id}`, {
+      const { data } = await axios.patch(`/api/driver/rollcall/${item.id}`, {
         status: item.status,
       });
-      if (data.error === true) {
-        // Tratar erro
-        console.log(data.error);
-        throw new Error('Erro ao tentar fazer o update da informação.');
+
+      if (data.error === false) {
+        setAllPresents(data.result);
+      } else {
+        errorControl(data.message);
       }
     } catch (error) {
-      console.log(error);
-      setLoading(false);
       throw new Error('Erro ao tentar acessar a API.');
     }
     setLoading(false);
@@ -92,12 +88,10 @@ export default function App() {
           <div className="flex flex-col">
             <Switch
               isSelected={cellValue}
-              isDisabled={loading || started}
+              isDisabled={loading}
               onClick={() => {
-                if (started === false) {
-                  setLoading(true);
-                  debouncedUpdateStatus(item);
-                }
+                setLoading(true);
+                debouncedUpdateStatus(item);
               }}
               size="sm"
             ></Switch>
@@ -106,29 +100,40 @@ export default function App() {
       case 'name':
         return <p>{cellValue}</p>;
       default:
-       
+        return <p>{cellValue}</p>;
     }
   };
 
   return (
-    <div>
+    <div className="m-4">
       <div className="flex items-center justify-center mt-20 gap-20">
-        <h1 className="text-center mt-8 mb-6 text-xl font-bold">Chamada de Presença</h1>
+        <h1 className="mt-8 mb-6 text-xl font-bold">📋 Chamada</h1>
+        <Button
+          className="font-semibold"
+          color="primary"
+          size="sm"
+          onClick={() => router.push('/driver/map')}
+        >
+          Voltar
+        </Button>
+      </div>
+      <div className="flex justify-center">
+        {allPresents === true && (
+          <p className="mb-4 text-center text-gray-500 font-light">
+            Todos alunos estão presentes. A opção de 'Começar Rota' foi
+            liberada.
+          </p>
+        )}
       </div>
       <div className="flex items-center justify-center">
         <div className="max-w-screen-md w-full">
-          <Table aria-label="Example table with custom cells">
+          <Table aria-label="Tabela">
             <TableHeader columns={columns}>
               {(column) => (
-                <TableColumn
-                  key={column.uid}
-                  align={column.uid === 'actions' ? 'center' : 'start'}
-                >
-                  {column.name}
-                </TableColumn>
+                <TableColumn key={column.uid}>{column.name}</TableColumn>
               )}
             </TableHeader>
-            <TableBody items={schools} emptyContent={'Sem registros.'}>
+            <TableBody items={studentsTrips} emptyContent={'Sem registros.'}>
               {(item) => (
                 <TableRow key={item.id}>
                   {(columnKey) => (

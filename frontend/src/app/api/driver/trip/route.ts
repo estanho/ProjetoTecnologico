@@ -4,14 +4,11 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-  const supabase = createRouteHandlerClient({ cookies });
-
-  const { data } = await supabase.auth.getSession();
-
-  let error = false;
-  let trips;
-
   try {
+    const supabase = createRouteHandlerClient({ cookies });
+
+    const { data } = await supabase.auth.getSession();
+
     const config = {
       headers: { Authorization: `Bearer ${data.session?.access_token}` },
     };
@@ -19,14 +16,15 @@ export async function GET() {
       `${process.env.API_URL}/trips/driver`,
       config,
     );
-    trips = result.data.result;
-  } catch (err) {
-    error = true;
-  }
 
-  if (error) {
-    return NextResponse.json({ error: true });
-  }
+    if (result.data.error === false) {
+      const trips = result.data.result;
 
-  return NextResponse.json({ error: false, trips });
+      return NextResponse.json({ error: false, trips });
+    } else {
+      return NextResponse.json({ error: true, message: result.data.message });
+    }
+  } catch (error) {
+    return NextResponse.json({ error: true, message: 'API' });
+  }
 }

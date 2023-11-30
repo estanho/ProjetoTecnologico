@@ -99,7 +99,7 @@ model School {
   default_location Address? @relation("default")
 
   driver_id String? @db.Uuid
-  driver    Driver? @relation(fields: [driver_id], references: [id])
+  driver    Driver? @relation(fields: [driver_id], references: [id], onDelete: Cascade)
 
   itineraries_morning   Itinerary[] @relation("school_morning")
   itineraries_afternoon Itinerary[] @relation("school_afternoon")
@@ -233,12 +233,16 @@ model Trip {
   id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   shift       Shift
   type        TypeTrip
-  path        Json?     @db.Json
+  path        String?
   duration    Float?
   km          Float?
   estimated   DateTime?
   started_at  DateTime?
   finished_at DateTime?
+  rollCall    Boolean?
+
+  latitude  Float?
+  longitude Float?
 
   created_at DateTime @default(now())
 
@@ -260,6 +264,8 @@ model Student_Trip {
   time             DateTime?
   created_at       DateTime         @default(now())
 
+  rollCallPresent Boolean? @default(false)
+
   student_id String?  @db.Uuid
   student    Student? @relation(fields: [student_id], references: [id], onDelete: Cascade)
 
@@ -277,7 +283,7 @@ model Notification_Subscription {
   created_at DateTime @default(now())
 
   user_id String?      @db.Uuid
-  user    Public_User? @relation(fields: [user_id], references: [id])
+  user    Public_User? @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@map("notifications_subscriptions")
   @@schema("public")

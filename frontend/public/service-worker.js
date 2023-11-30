@@ -1,3 +1,4 @@
+//
 self.addEventListener('push', function (event) {
 
   const body = event.data?.text() ?? '';
@@ -5,7 +6,7 @@ self.addEventListener('push', function (event) {
   event.waitUntil(
     self.registration.showNotification('Microrota', {
       body,
-      icon: './icon-192x192.png'
+      icon: './icons/icon-192x192.png'
     })
   );
 });

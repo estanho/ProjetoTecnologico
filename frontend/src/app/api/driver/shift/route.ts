@@ -3,45 +3,43 @@ import axios from 'axios';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
-export async function GET(request: Request) {
-  const supabase = createRouteHandlerClient({ cookies });
-
-  const { data } = await supabase.auth.getSession();
-
-  let error = false;
-  let result;
-
-  let shifts = {
-    morning: false,
-    afternoon: false,
-    night: false,
-  };
-
+export async function GET() {
   try {
+    const supabase = createRouteHandlerClient({ cookies });
+
+    const { data } = await supabase.auth.getSession();
+
+    let shifts = {
+      morning: false,
+      afternoon: false,
+      night: false,
+    };
+
     const config = {
       headers: { Authorization: `Bearer ${data.session?.access_token}` },
     };
-    result = await axios.get(`${process.env.API_URL}/school`, config);
-    result = result.data.schools;
+    const result = await axios.get(`${process.env.API_URL}/school`, config);
 
-    for (let i = 0; i < result.length; i++) {
-      if (result[i].morning === true) {
-        shifts.morning = true;
+    if (result.data.error === false) {
+      const schools = result.data.schools;
+
+      for (let i = 0; i < schools.length; i++) {
+        if (schools[i].morning === true) {
+          shifts.morning = true;
+        }
+        if (schools[i].afternoon === true) {
+          shifts.afternoon = true;
+        }
+        if (schools[i].night === true) {
+          shifts.night = true;
+        }
       }
-      if (result[i].afternoon === true) {
-        shifts.afternoon = true;
-      }
-      if (result[i].night === true) {
-        shifts.night = true;
-      }
+
+      return NextResponse.json({ error: false, data: shifts });
+    } else {
+      return NextResponse.json({ error: true, message: result.data.message });
     }
   } catch (err) {
-    error = true;
+    return NextResponse.json({ error: true, message: 'API' });
   }
-
-  if (error) {
-    return NextResponse.json({ error: true });
-  }
-
-  return NextResponse.json({ error: false, data: shifts });
 }

@@ -5,7 +5,7 @@ export default function Logo() {
   return (
     <Link href="/" className="flex items-center">
       <Image
-        src="/logo.png"
+        src="/icons/logo.png"
         width={50}
         height={50}
         alt="Logo MicroRota"

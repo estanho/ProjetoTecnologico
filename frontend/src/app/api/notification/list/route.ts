@@ -4,26 +4,26 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-  const supabase = createRouteHandlerClient({ cookies });
-
-  const { data } = await supabase.auth.getSession();
-
-  let error = false;
-  let notifications;
-
   try {
+    const supabase = createRouteHandlerClient({ cookies });
+    const { data } = await supabase.auth.getSession();
+
     const config = {
       headers: { Authorization: `Bearer ${data.session?.access_token}` },
     };
-    const result = await axios.get(`${process.env.API_URL}/notification/list`, config);
-    notifications = result.data.notifications;
-  } catch (err) {
-    error = true;
-  }
+    const result = await axios.get(
+      `${process.env.API_URL}/notification/list`,
+      config,
+    );
 
-  if (error) {
-    return NextResponse.json({ error: true });
-  }
+    if (result.data.error === false) {
+      const notifications = result.data.notifications;
 
-  return NextResponse.json({ error: false, notifications });
+      return NextResponse.json({ error: false, notifications });
+    } else {
+      return NextResponse.json({ error: true, message: result.data.message });
+    }
+  } catch (error) {
+    return NextResponse.json({ error: true, message: 'API' });
+  }
 }

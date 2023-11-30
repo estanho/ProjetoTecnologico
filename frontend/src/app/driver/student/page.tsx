@@ -15,10 +15,6 @@ export default async function Index() {
     return redirect('/auth/login');
   }
 
-  if (session.user.user_metadata.role !== 'DriverRole') {
-    return redirect('/');
-  }
-
   return (
     <div>
       <NavBar user={session.user} role={session.user.user_metadata.role} />

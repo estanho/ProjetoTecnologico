@@ -85,7 +85,6 @@ export class NotificationService {
 
       return { error: false };
     } catch (error) {
-      console.log(error);
       return { error: true, message: error };
     }
   }

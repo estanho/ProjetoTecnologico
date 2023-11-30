@@ -12,14 +12,14 @@ import {
 } from '@nextui-org/react';
 import toast from 'react-hot-toast';
 import axios from 'axios';
-import error from 'next/error';
+import { errorControl } from '../../utils/warnings';
 
 const columns = [
   { name: 'TIPO', uid: 'type' },
   { name: 'ALUNO', uid: 'student' },
-  { name: 'RESPONSÁVEL', uid: 'responsible' },
-  { name: 'HORÁRIO', uid: 'time'},
-  { name: 'DIA', uid: 'day'},
+  { name: 'MOTORISTA', uid: 'responsible' },
+  { name: 'HORÁRIO', uid: 'time' },
+  { name: 'DIA', uid: 'day' },
 ];
 
 type notificationType = {
@@ -36,18 +36,18 @@ export default function App() {
   const getList = useCallback(async () => {
     try {
       const { data } = await axios.get(`/api/notification/list`);
+
       if (data.error === false) {
         setNotifications(data.notifications);
-        //toast.success('Lista atualizada! 😁');
       } else {
-        console.log(data);
-        throw error;
+        errorControl(data.message);
       }
     } catch (error) {
       toast.error('Ocorreu um erro ao carregar os dados. 😥');
     }
   }, [setNotifications]);
 
+  // Atualização da lista
   useEffect(() => {
     getList();
   }, [getList]);
@@ -59,17 +59,17 @@ export default function App() {
       case 'type':
         return (
           <div>
-            {item.type === 'going_false' || item.type === 'return_false' ? (
-              <Chip color="danger" variant="flat" size="sm" radius="sm">
-                {item.type === 'going_false' ? 'AUSENTE IDA' : 'AUSENTE VOLTA' }
+            {item.type === 'embarked' ? (
+              <Chip color="warning" variant="flat" size="sm" radius="sm">
+                EMBARQUE
               </Chip>
             ) : (
               ''
             )}
 
-            {item.type === 'going_true' || item.type === 'return_true' ? (
+            {item.type === 'disembarked' ? (
               <Chip color="success" variant="flat" size="sm" radius="sm">
-                {item.type === 'going_true' ? 'PRESENTE IDA' : 'PRESENTE VOLTA' }
+                DESEMBARQUE
               </Chip>
             ) : (
               ''
@@ -90,25 +90,23 @@ export default function App() {
   };
 
   return (
-    <div>
+    <div className="m-4">
       <div className="flex items-center justify-center mt-20 gap-20">
-        <h1 className="text-center mt-8 mb-6 text-xl font-bold">Notificações</h1>
+        <h1 className="mt-8 mb-6 text-xl font-bold">🔔 Notificações</h1>
       </div>
       <div className="flex items-center justify-center">
         <div className="max-w-screen-md w-full">
-          <Table aria-label="Example table with custom cells">
+          <Table aria-label="Tabela">
             <TableHeader columns={columns}>
               {(column) => (
-                <TableColumn
-                  key={column.uid}
-                >
+                <TableColumn key={column.uid} className="text-center">
                   {column.name}
                 </TableColumn>
               )}
             </TableHeader>
             <TableBody items={notifications} emptyContent={'Sem registros.'}>
               {(item) => (
-                <TableRow key={item.id}>
+                <TableRow key={item.id} className="text-center">
                   {(columnKey) => (
                     <TableCell>{renderList(item, columnKey)}</TableCell>
                   )}

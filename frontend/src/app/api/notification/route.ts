@@ -2,54 +2,55 @@ import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import axios from 'axios';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
+import result from 'postcss/lib/result';
 
 export async function GET() {
-  const supabase = createRouteHandlerClient({ cookies });
-
-  const { data } = await supabase.auth.getSession();
-
-  let error = false;
-  let publicKey;
-
   try {
+    const supabase = createRouteHandlerClient({ cookies });
+    const { data } = await supabase.auth.getSession();
+
     const config = {
       headers: { Authorization: `Bearer ${data.session?.access_token}` },
     };
-    const result = await axios.get(`${process.env.API_URL}/notification/public_key`, config);
-    publicKey = result.data.publicKey;
+    const result = await axios.get(
+      `${process.env.API_URL}/notification/public_key`,
+      config,
+    );
 
-  } catch (err) {
-    error = true;
+    if (result.data.error === false) {
+      const publicKey = result.data.publicKey;
+
+      return NextResponse.json({ error: false, publicKey });
+    } else {
+      return NextResponse.json({ error: true, message: result.data.message });
+    }
+  } catch (error) {
+    return NextResponse.json({ error: true, message: 'API' });
   }
-
-  if (error) {
-    return NextResponse.json({ error: true });
-  }
-
-  return NextResponse.json({ error: false, publicKey });
 }
 
 export async function POST(request: Request) {
-  const supabase = createRouteHandlerClient({ cookies });
-
-  const { data } = await supabase.auth.getSession();
-
-  const body = await request.json();
-
-  let result;
-
   try {
+    const supabase = createRouteHandlerClient({ cookies });
+    const { data } = await supabase.auth.getSession();
+
+    const body = await request.json();
+
     const config = {
       headers: { Authorization: `Bearer ${data.session?.access_token}` },
     };
-    result = await axios.post(`${process.env.API_URL}/notification/register`, body, config);
+    const result = await axios.post(
+      `${process.env.API_URL}/notification/register`,
+      body,
+      config,
+    );
 
-    if (result.data.error === true) {
-      throw new Error(result.data.message);
+    if (result.data.error === false) {
+      return NextResponse.json({ error: false });
+    } else {
+      return NextResponse.json({ error: true, message: result.data.message });
     }
   } catch (err) {
-    return NextResponse.json({ error: true, message: result?.data.message });
+    return NextResponse.json({ error: true, message: 'API' });
   }
-
-  return NextResponse.json({ error: false });
 }

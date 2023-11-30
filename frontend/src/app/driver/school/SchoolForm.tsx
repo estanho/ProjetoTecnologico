@@ -21,6 +21,7 @@ import { z } from 'zod';
 import { setHours, setMinutes, parse, format, parseISO } from 'date-fns';
 import axios from 'axios';
 import error from 'next/error';
+import { errorControl } from '../../utils/warnings';
 
 const isTimeFormat = (value: any) => {
   return /^([01][0-9]|2[0-3]):[0-5][0-9]$/.test(value);
@@ -171,13 +172,13 @@ const schemaData = z
 
 type dataType = z.infer<typeof schemaData>;
 
-const libraries = ['places'];
-
 type locationType = {
   place_id: string;
   latitude: number;
   longitude: number;
 };
+
+const libraries = ['places'];
 
 export default function SchoolForm({ school, started }: any) {
   const { isLoaded } = useJsApiLoader({
@@ -190,11 +191,11 @@ export default function SchoolForm({ school, started }: any) {
   const [loading, setLoading] = useState(false);
 
   const [shifts, setShifts] = useState<any>();
-
   const [name, setName] = useState<string>('');
   const [address, setAdress] = useState<string>('');
   const [autocomplete, setAutocomplete] =
     useState<google.maps.places.Autocomplete>();
+
   const [location, setLocation] = useState<locationType>({
     place_id: '',
     latitude: 0,
@@ -247,6 +248,7 @@ export default function SchoolForm({ school, started }: any) {
   const getSchools = useCallback(async () => {
     try {
       const { data } = await axios.get(`/api/driver/shift`);
+
       if (data.error === false) {
         setShifts({
           morning: data.data.morning,
@@ -254,11 +256,12 @@ export default function SchoolForm({ school, started }: any) {
           night: data.data.night,
         });
       } else {
-        throw error;
+        errorControl(data.message);
       }
     } catch (error) {
       toast.error('Ocorreu um erro ao carregar as escolas. 😥');
     }
+    setLoading(false);
   }, []);
 
   const getItem = useCallback(async () => {
@@ -288,14 +291,13 @@ export default function SchoolForm({ school, started }: any) {
           longitude: school.default_location.longitude,
         });
       }
-      //
     } catch (error) {
       toast.error('Ocorreu um erro ao carregar os dados. 😥');
-    } finally {
-      setLoading(false);
     }
+    setLoading(false);
   }, [school]);
 
+  // Atualizando informações
   useEffect(() => {
     getSchools();
     getItem();
@@ -306,6 +308,7 @@ export default function SchoolForm({ school, started }: any) {
       if (started === false) {
         setLoading(true);
         let result;
+
         if (school === null) {
           result = await axios.post('/api/driver/school', data);
         } else {
@@ -317,10 +320,9 @@ export default function SchoolForm({ school, started }: any) {
         }
 
         if (result.data.error === false) {
-          setLoading(false);
           toast.success('Alteração realizada com sucesso! 😁');
         } else {
-          throw error;
+          errorControl(result.data.message);
         }
       }
     } catch (error) {

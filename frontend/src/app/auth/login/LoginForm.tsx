@@ -16,7 +16,7 @@ export default function SignupForm() {
   const { supabase } = useSupabase();
 
   return (
-    <div className="flex items-center justify-center h-screen">
+    <div className="flex items-center justify-center h-screen mt-14">
       <Card className="max-w-xl w-full">
         <CardHeader className="justify-center">
           <p className="text-xl">Login</p>

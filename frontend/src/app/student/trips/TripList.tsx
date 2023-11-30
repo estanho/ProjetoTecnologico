@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   Card,
@@ -11,30 +12,31 @@ import {
 } from '@nextui-org/react';
 import toast from 'react-hot-toast';
 import axios from 'axios';
-import error from 'next/error';
-import debounce from 'lodash.debounce';
+import { errorControl } from '../../utils/warnings';
 
 export default function MyComponent() {
-  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
   const [student, setStudent] = useState([]);
 
   const getList = useCallback(async () => {
     try {
       const { data } = await axios.get(`/api/student/trip`);
+
       if (data.error === false) {
         setStudent(data.student);
-        //toast.success('Lista atualizada! 😁');
       } else {
-        throw error;
+        errorControl(data.message);
       }
     } catch (error) {
       toast.error('Ocorreu um erro ao carregar os dados. 😥');
     }
-  }, []);
+  }, [setStudent]);
 
+  // Atualização da lista
   useEffect(() => {
     getList();
-  }, [getList, loading]);
+  }, [getList]);
 
   const renderList = (student: any) => {
     return (
@@ -47,14 +49,15 @@ export default function MyComponent() {
           <Button
             className="font-medium mt-6 lg:m-0"
             size="sm"
+            color="primary"
             onPress={() => {
-              console.log(student);
+              router.push(`/student/map/${student.id}`);
             }}
           >
-            Acompanhar Viagem
+            Visualizar Mapa
           </Button>
         </div>
-        <Card className="m-2">
+        <Card>
           <CardBody className="p-2">
             <Accordion>
               {student.itineraries &&
@@ -186,11 +189,9 @@ export default function MyComponent() {
   };
 
   return (
-    <div>
+    <div className="m-4">
       <div className="flex items-center justify-center mt-20 gap-20">
-        <h1 className="text-center mt-8 mb-6 text-xl font-bold">
-          Roteiro de Viagens
-        </h1>
+        <h1 className="mt-8 mb-6 text-xl font-bold">🚐 Roteiro de Viagens</h1>
       </div>
       <div className="flex items-center justify-center">
         <div className="max-w-screen-md w-full ">

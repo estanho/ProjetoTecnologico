@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   Card,
@@ -11,39 +12,33 @@ import {
 } from '@nextui-org/react';
 import toast from 'react-hot-toast';
 import axios from 'axios';
-import error from 'next/error';
 import debounce from 'lodash.debounce';
+import { errorControl } from '../../utils/warnings';
 
 export default function MyComponent() {
+  const router = useRouter();
+
   const [loading, setLoading] = useState(false);
   const [students, setStudents] = useState([]);
 
   const getList = useCallback(async () => {
     try {
       const { data } = await axios.get(`/api/responsible/trip`);
+
       if (data.error === false) {
         setStudents(data.students);
-        //toast.success('Lista atualizada! 😁');
       } else {
-        console.log(data);
-        throw error;
+        errorControl(data.message);
       }
     } catch (error) {
       toast.error('Ocorreu um erro ao carregar os dados. 😥');
     }
-  }, []);
+  }, [setStudents]);
 
+  // Atualização da lista
   useEffect(() => {
     getList();
   }, [getList, loading]);
-
-  const debouncedUpdateStatus = debounce((item) => {
-    toast.promise(updateStatus(item), {
-      loading: 'Aguarde... ⏳',
-      success: 'Item alterado com sucesso! 👍🏻',
-      error: 'Não foi possível realizar a alteração. 😥',
-    });
-  }, 1000);
 
   const updateStatus = async (item: any) => {
     try {
@@ -51,19 +46,28 @@ export default function MyComponent() {
         `/api/responsible/trip/${item.trip_id}`,
         {
           student_id: item.student_id,
+          driver_id: item.driver_id,
           type: item.type,
         },
       );
-      if (data.error === true) {
-        // Tratar erro
-        throw error;
+      if (data.error === false) {
+        //
+      } else {
+        errorControl(data.message);
       }
     } catch (error) {
-      setLoading(false);
-      throw error;
+      throw new Error('Erro ao tentar acessar a API.');
     }
     setLoading(false);
   };
+
+  const debouncedUpdateStatus = debounce(async (item) => {
+    toast.promise(updateStatus(item), {
+      loading: 'Aguarde... ⏳',
+      success: 'Item alterado com sucesso! 👍🏻',
+      error: 'Não foi possível realizar a alteração. 😥',
+    });
+  }, 1000);
 
   const renderList = (student: any, index: any) => {
     return (
@@ -127,19 +131,20 @@ export default function MyComponent() {
             </Button>
           </div>
           <Button
-            className="font-medium mt-6 lg:m-0"
+            className="font-semibold mt-6 lg:m-0"
             size="sm"
+            color="primary"
             onPress={() => {
-              console.log(student);
+              router.push(`/responsible/map/${student.id}`);
             }}
           >
-            Acompanhar Viagem
+            Visualizar Mapa
           </Button>
         </div>
-        <Card className="m-2">
+        <Card>
           <CardBody className="p-2">
             <Accordion>
-              {student.itineraries &&
+              {student.itineraries.length > 0 ? (
                 student.itineraries.map(
                   (itinerary: any, indexItinerary: any) => {
                     return (
@@ -259,7 +264,14 @@ export default function MyComponent() {
                       </AccordionItem>
                     );
                   },
-                )}
+                )
+              ) : (
+                <div>
+                  <p className="mt-12 flex justify-center text-center text-gray-500">
+                    Sem registros de viagens no momento.
+                  </p>
+                </div>
+              )}
             </Accordion>
           </CardBody>
         </Card>
@@ -268,18 +280,21 @@ export default function MyComponent() {
   };
 
   return (
-    <div>
+    <div className="m-4">
       <div className="flex items-center justify-center mt-20 gap-20">
-        <h1 className="text-center mt-8 mb-6 text-xl font-bold">
-          Roteiro de Viagens
-        </h1>
+        <h1 className="mt-8 mb-6 text-xl font-bold">🚐 Roteiro de Viagens</h1>
       </div>
       <div className="flex items-center justify-center">
         <div className="max-w-screen-md w-full ">
-          {students &&
+          {students.length > 0 ? (
             students.map((student: any, index: any) =>
               renderList(student, index),
-            )}
+            )
+          ) : (
+            <p className="mt-12 flex justify-center text-center text-gray-500">
+              Nenhum estudante cadastrado no momento.
+            </p>
+          )}
         </div>
       </div>
     </div>

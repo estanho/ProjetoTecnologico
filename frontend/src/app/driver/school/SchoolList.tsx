@@ -22,9 +22,11 @@ import {
 } from '@nextui-org/react';
 import { EditIcon } from '../../../components/icons/EditIcon';
 import { DeleteIcon } from '../../../components/icons/DeleteIcon';
+import { errorControl, startNotice } from '../../utils/warnings';
 import SchoolForm from './SchoolForm';
 import toast from 'react-hot-toast';
 import axios from 'axios';
+import Confirmation from '../../../components/Confirmation';
 
 const columns = [
   { name: 'STATUS', uid: 'status' },
@@ -47,53 +49,55 @@ type schoolType = {
 export default function App() {
   const [loading, setLoading] = useState(false);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [started, setStarted] = useState(false);
+  const {
+    isOpen: isOpenConfirmation,
+    onOpen: onOpenConfirmation,
+    onOpenChange: onOpenChangeConfirmation,
+  } = useDisclosure();
+  const [confirmationAction, setConfirmationAction] = useState('');
 
+  const [started, setStarted] = useState(false);
   const [school, setSchool] = useState<schoolType | null>();
   const [schools, setSchools] = useState<schoolType[]>([]);
 
   const getList = useCallback(async () => {
     try {
       const { data } = await axios.get(`/api/driver/school`);
+
       if (data.error === false) {
         setSchools(data.schools);
         setStarted(data.started);
-        //toast.success('Lista atualizada! 😁');
       } else {
-        throw new Error('Erro ao tentar buscar informações.');
+        errorControl(data.message);
       }
     } catch (error) {
       toast.error('Ocorreu um erro ao carregar os dados. 😥');
     }
   }, [setSchools, setStarted]);
 
+  // Atualização da lista
   useEffect(() => {
     getList();
   }, [getList, loading]);
 
+  // Aviso que as viagens já iniciaram
   useEffect(() => {
     if (started) {
-      toast(
-        'As viagens de hoje já começaram... e por esse motivo não é possível alterar os dados das escolas por enquanto. Finalize as viagens de hoje para conseguir alterar as informações das escolas.',
-        {
-          duration: 10000,
-          icon: '🚐',
-          position: 'bottom-left',
-        },
-      );
+      startNotice();
     }
   }, [started]);
 
   const deleteItem = async (item: any) => {
     try {
       const { data } = await axios.delete(`/api/driver/school/${item.id}`);
-      if (data.error === true) {
-        // Tratar erro
-        throw new Error('Erro ao tentar excluir informações.');
+
+      if (data.error === false) {
+        //
+      } else {
+        errorControl(data.message);
       }
     } catch (error) {
-      setLoading(false);
-      throw new Error('Erro ao tentar acessar a API.');
+      throw new Error('Erro ao tentar excluir');
     }
     setLoading(false);
   };
@@ -111,14 +115,13 @@ export default function App() {
       const { data } = await axios.patch(`/api/driver/school/${item.id}`, {
         status: item.status,
       });
-      if (data.error === true) {
-        // Tratar erro
-        console.log(data.error);
-        throw new Error('Erro ao tentar fazer o update da informação.');
+
+      if (data.error === false) {
+        //
+      } else {
+        errorControl(data.message);
       }
     } catch (error) {
-      console.log(error);
-      setLoading(false);
       throw new Error('Erro ao tentar acessar a API.');
     }
     setLoading(false);
@@ -131,6 +134,13 @@ export default function App() {
       error: 'Não foi possível atualizar o status. 😥',
     });
   }, 1000);
+
+  const handleConfirm = async (action: any) => {
+    if (action === 'delete') {
+      setLoading(true);
+      await debouncedDelete(school);
+    }
+  };
 
   const renderList = (item: any, columnKey: any) => {
     const cellValue = item[columnKey];
@@ -155,13 +165,15 @@ export default function App() {
       case 'name':
         return <p>{cellValue}</p>;
       case 'address':
-        return <p>{cellValue}</p>;
+        return (
+          <div>
+            <p className="hidden md:flex">{cellValue}</p>
+            <p className="flex md:hidden justify-center">• • •</p>
+          </div>
+        );
       case 'actions':
         return (
           <div className="relative flex items-center gap-2">
-            <Tooltip content="Details">
-              <span className="text-lg text-default-400 cursor-pointer active:opacity-50"></span>
-            </Tooltip>
             <Tooltip content="Editar item">
               <span
                 className="text-lg text-default-400 cursor-pointer active:opacity-50"
@@ -178,8 +190,9 @@ export default function App() {
                 className="text-lg text-danger cursor-pointer active:opacity-50"
                 onClick={() => {
                   if (started === false) {
-                    setLoading(true);
-                    debouncedDelete(item);
+                    setSchool(item);
+                    setConfirmationAction('delete');
+                    onOpenConfirmation();
                   }
                 }}
               >
@@ -220,11 +233,12 @@ export default function App() {
   };
 
   return (
-    <div>
+    <div className="m-4">
       <div className="flex items-center justify-center mt-20 gap-20">
-        <h1 className="text-center mt-8 mb-6 text-xl font-bold">Escolas</h1>
+        <h1 className="mt-8 mb-6 text-xl font-bold">🏫 Escolas</h1>
         <Button
-          className="justify-center"
+          className="font-semibold"
+          color="primary"
           onPress={() => {
             setSchool(null);
             onOpen();
@@ -235,12 +249,13 @@ export default function App() {
       </div>
       <div className="flex items-center justify-center">
         <div className="max-w-screen-md w-full">
-          <Table aria-label="Example table with custom cells">
+          <Table aria-label="Tabela">
             <TableHeader columns={columns}>
               {(column) => (
                 <TableColumn
                   key={column.uid}
                   align={column.uid === 'actions' ? 'center' : 'start'}
+                  className="text-center"
                 >
                   {column.name}
                 </TableColumn>
@@ -248,7 +263,7 @@ export default function App() {
             </TableHeader>
             <TableBody items={schools} emptyContent={'Sem registros.'}>
               {(item) => (
-                <TableRow key={item.id}>
+                <TableRow key={item.id} className="text-center">
                   {(columnKey) => (
                     <TableCell>{renderList(item, columnKey)}</TableCell>
                   )}
@@ -258,8 +273,11 @@ export default function App() {
           </Table>
         </div>
       </div>
+
       {/* MODAL */}
+
       <div>
+        {/* Modal de Cadastro/Atualização */}
         <Modal
           isOpen={isOpen}
           onOpenChange={() => {
@@ -268,6 +286,7 @@ export default function App() {
           }}
           placement="center"
           isDismissable={false}
+          className="max-h-[90vh] overflow-y-auto md:max-h-[95vh]"
         >
           <ModalContent>
             {(onClose) => (
@@ -287,6 +306,14 @@ export default function App() {
             )}
           </ModalContent>
         </Modal>
+
+        <Confirmation
+          isOpen={isOpenConfirmation}
+          onOpen={onOpenConfirmation}
+          onOpenChange={onOpenChangeConfirmation}
+          onConfirm={handleConfirm}
+          action={confirmationAction}
+        />
       </div>
     </div>
   );

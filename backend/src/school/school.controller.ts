@@ -16,6 +16,10 @@ import { UserFromJwt } from '../auth/models/UserFromJwt';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '../auth/models/Role';
 
+type updateStatusType = {
+  status: boolean;
+};
+
 @Controller('school')
 export class SchoolController {
   constructor(private readonly schoolService: SchoolService) {}
@@ -50,7 +54,7 @@ export class SchoolController {
   updateStatus(
     @CurrentUser() user: UserFromJwt,
     @Param('id') id: string,
-    @Body() data: { status: boolean },
+    @Body() data: updateStatusType,
   ) {
     return this.schoolService.updateStatus(user, id, data);
   }

@@ -1,9 +1,9 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import WebPush from 'web-push';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { NotificationService } from './notification.service';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { UserFromJwt } from '../auth/models/UserFromJwt';
+import WebPush from 'web-push';
 
 WebPush.setVapidDetails(
   'https://microrota.vercel.app',
@@ -22,7 +22,7 @@ export class NotificationController {
 
   @Get('public_key')
   findAll() {
-    return { publicKey: process.env.NOTIFICATION_PUBLIC_KEY };
+    return { error: false, publicKey: process.env.NOTIFICATION_PUBLIC_KEY };
   }
 
   @Post('register')

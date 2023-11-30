@@ -89,11 +89,10 @@ export class TripsLogicService {
           },
         },
       });
-      // Se não existir itinerary sai da função
       if (itinerary === null) {
         throw new Error('no_itinerary');
       }
-      // Pegando as trips para excluir dps
+      // Pegando as trips em caso de errro para excluir dps
       const trips = await this.prismaService.trip.findMany({
         where: {
           itinerary_id: itinerary.id,
@@ -567,7 +566,7 @@ export class TripsLogicService {
         nightReturnTrip,
       };
     } catch (error) {
-      // as trips para excluir
+      // Pegando as trips que devem ser excluidas
       const trips = await this.prismaService.trip.findMany({
         where: {
           itinerary_id: itinerary.id,

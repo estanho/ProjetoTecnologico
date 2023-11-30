@@ -3,8 +3,14 @@ import { UserFromJwt } from '../auth/models/UserFromJwt';
 import { TripGenerateService } from './services/tripsGenerate.service';
 import { PrismaService } from '../database/prisma.service';
 import { TripCreateService } from './services/tripsCreate.service';
-import moment from 'moment';
 import { NotificationLogicService } from '../notification/notificationLogic.service';
+import moment from 'moment';
+
+type updateStatusType = {
+  student_id: string;
+  driver_id: string;
+  type: string;
+};
 
 @Injectable()
 export class TripsService {
@@ -26,7 +32,6 @@ export class TripsService {
           id: true,
         },
       });
-
       if (driver === null) {
         throw new Error('no_driver');
       }
@@ -373,7 +378,7 @@ export class TripsService {
         result.push(newItinerary);
       }
 
-      return { error: true, result };
+      return { error: false, result };
     } catch (error) {
       console.log(error);
       return { error: true, message: error.message };
@@ -391,11 +396,10 @@ export class TripsService {
           id: true,
         },
       });
-
       if (responsible === null) {
         throw new Error('no_responsible');
       }
-
+      // Verificando Students
       const students = await this.prismaService.student.findMany({
         where: {
           responsibles: {
@@ -414,11 +418,10 @@ export class TripsService {
           },
         },
       });
-      // Se não existir students sai da função
       if (students === null) {
         throw new Error('no_students');
       }
-
+      // Verificando Itineraries
       const itineraries = await this.prismaService.itinerary.findMany({
         where: {
           trips: {
@@ -501,7 +504,6 @@ export class TripsService {
           },
         },
       });
-      // Se não existir itinerary sai da função
       if (itineraries === null) {
         throw new Error('no_itinerary');
       }
@@ -1290,7 +1292,11 @@ export class TripsService {
     }
   }
 
-  async updateTripStudent(user: UserFromJwt, id: string, data) {
+  async updateTripStudent(
+    user: UserFromJwt,
+    id: string,
+    data: updateStatusType,
+  ) {
     try {
       // Verificando Responsible
       const responsible = await this.prismaService.responsible.findFirst({
@@ -1309,7 +1315,7 @@ export class TripsService {
       if (responsible === null) {
         throw new Error('no_responsible');
       }
-
+      // Verificando Driver
       const driver = await this.prismaService.driver.findFirst({
         where: {
           user_id: data.driver_id,
@@ -1318,7 +1324,7 @@ export class TripsService {
       if (driver === null) {
         throw new Error('no_driver');
       }
-
+      // Verificando Student
       const student = await this.prismaService.student.findFirst({
         where: {
           id: data.student_id,
@@ -1331,6 +1337,16 @@ export class TripsService {
       });
       if (student === null) {
         throw new Error('no_student');
+      }
+      // Verificando Trip
+      const trip = await this.prismaService.trip.findFirst({
+        where: {
+          id,
+          started_at: null,
+        },
+      });
+      if (trip === null) {
+        throw new Error('no_trip');
       }
 
       if (data.type === 'going') {
@@ -1400,16 +1416,6 @@ export class TripsService {
           return: data.type === 'return' ? !student.return : student.return,
         },
       });
-
-      const trip = await this.prismaService.trip.findFirst({
-        where: {
-          id,
-        },
-      });
-
-      if (trip === null) {
-        throw new Error('no_trip');
-      }
 
       if (trip.type === 'going_morning') {
         // Gerando Rota de Ida da Manhã
@@ -1635,17 +1641,13 @@ export class TripsService {
         }
       }
 
-      const oldTrip = await this.prismaService.trip.delete({
+      await this.prismaService.trip.delete({
         where: {
           id: trip.id,
         },
       });
 
-      if (oldTrip === null) {
-        throw new Error('oldTrip_NotDeleted');
-      }
-
-      // Criando notificação
+      // Criando e enviando notificação
       await this.notificationLogicService.create({
         type:
           data.type === 'going'
@@ -1653,368 +1655,12 @@ export class TripsService {
             : `${data.type}_${!student.return}`,
         student_id: student.id,
         user_id: driver.user_id,
-        name: responsible.user?.name,
+        name: responsible.user.name,
         name_student: student.name,
       });
 
-      return { error: false, oldTrip };
+      return { error: false };
     } catch (error) {
-      console.log(error);
-      return { error: true, message: error.message };
-    }
-  }
-  // Arrumar depois
-  async findTrips(user: UserFromJwt) {
-    try {
-      // Pega todos os itinerarios
-      const itinerary = await this.prismaService.itinerary.findFirst({
-        where: {
-          driver: {
-            user_id: user.id,
-          },
-        },
-        select: {
-          id: true,
-          day: true,
-          started: true,
-          school_morning_id: true,
-          school_morning: {
-            select: {
-              name: true,
-              status: true,
-              morning_arrival: true,
-              morning_departure: true,
-              address: {
-                select: {
-                  name: true,
-                },
-              },
-              default_location: {
-                select: {
-                  name: true,
-                },
-              },
-            },
-          },
-          school_afternoon_id: true,
-          school_afternoon: {
-            select: {
-              name: true,
-              status: true,
-              afternoon_arrival: true,
-              afternoon_departure: true,
-              address: {
-                select: {
-                  name: true,
-                },
-              },
-              default_location: {
-                select: {
-                  name: true,
-                },
-              },
-            },
-          },
-          school_night_id: true,
-          school_night: {
-            select: {
-              name: true,
-              status: true,
-              night_arrival: true,
-              night_departure: true,
-              address: {
-                select: {
-                  name: true,
-                },
-              },
-              default_location: {
-                select: {
-                  name: true,
-                },
-              },
-            },
-          },
-        },
-        orderBy: {
-          day: 'desc',
-        },
-      });
-      // Se não existir itinerary sai da função
-      if (itinerary === null) {
-        throw new Error('no_itinerary');
-      }
-
-      let result = {};
-
-      const trip = await this.prismaService.trip.findFirst({
-        where: {
-          itinerary_id: itinerary.id,
-          finished_at: null,
-        },
-        select: {
-          id: true,
-          path: true,
-          duration: true,
-          estimated: true,
-          started_at: true,
-          finished_at: true,
-          type: true,
-          km: true,
-          student_trips: {
-            where: {
-              time: null,
-            },
-            select: {
-              student: {
-                select: {
-                  name: true,
-                  goes: true,
-                  return: true,
-                  address: {
-                    select: {
-                      name: true,
-                    },
-                  },
-                  responsible_absence_going: {
-                    select: {
-                      user: {
-                        select: {
-                          name: true,
-                        },
-                      },
-                    },
-                  },
-                  responsible_absence_return: {
-                    select: {
-                      user: {
-                        select: {
-                          name: true,
-                        },
-                      },
-                    },
-                  },
-                },
-              },
-              order: true,
-              absent: true,
-              time: true,
-              type: true,
-            },
-            orderBy: {
-              order: 'asc',
-            },
-          },
-        },
-        orderBy: {
-          estimated: 'asc',
-        },
-      });
-
-      const newItinerary = {
-        id: itinerary.id,
-        title: moment(itinerary.day).format('DD/MM/YYYY'),
-        trips: {},
-      };
-
-      // Informações da Trip
-      const newTrip = {
-        id: trip.id,
-        title: '',
-        type: trip.type,
-        schools: '',
-        duration: `${trip.duration.toFixed(0)} min`,
-        km: `${trip.km.toFixed(1)} km`,
-        started:
-          trip.started_at !== null
-            ? moment(trip.started_at).format('HH:mm')
-            : '',
-        finished:
-          trip.finished_at !== null
-            ? moment(trip.finished_at).format('HH:mm')
-            : '',
-        recommendation:
-          trip.type === 'going_morning' ||
-          trip.type === 'going_afternoon' ||
-          trip.type === 'going_night'
-            ? moment(trip.estimated).format('HH:mm')
-            : '',
-        start_time: '',
-        end_time: '',
-        absents: [],
-        events: [],
-      };
-
-      if (trip.type === 'going_morning') {
-        newTrip.title = '🌄 MANHÃ [Ida]';
-        newTrip.schools = `${itinerary.school_morning.name}`;
-        newTrip.start_time = moment(
-          itinerary.school_morning.morning_arrival,
-        ).format('HH:mm');
-      } else if (trip.type === 'return_morning') {
-        newTrip.title = '🌄 MANHÃ [Volta]';
-        newTrip.schools = `${itinerary.school_morning.name}`;
-        newTrip.end_time = moment(
-          itinerary.school_morning.morning_departure,
-        ).format('HH:mm');
-      } else if (trip.type === 'going_afternoon_return_morning') {
-        newTrip.title = '🌄 MANHÃ [Volta] -> ⛅ TARDE [Ida]';
-        newTrip.schools = `${itinerary.school_morning.name} -> ${itinerary.school_afternoon.name}`;
-        newTrip.start_time = moment(
-          itinerary.school_afternoon.afternoon_arrival,
-        ).format('HH:mm');
-        newTrip.end_time = moment(
-          itinerary.school_morning.morning_departure,
-        ).format('HH:mm');
-      } else if (trip.type === 'going_afternoon') {
-        newTrip.title = '⛅ TARDE [Ida]';
-        newTrip.schools = `${itinerary.school_afternoon.name}`;
-        newTrip.start_time = moment(
-          itinerary.school_afternoon.afternoon_arrival,
-        ).format('HH:mm');
-      } else if (trip.type === 'return_afternoon') {
-        newTrip.title = '⛅ TARDE [Volta]';
-        newTrip.schools = `${itinerary.school_afternoon.name}`;
-        newTrip.end_time = moment(
-          itinerary.school_afternoon.afternoon_departure,
-        ).format('HH:mm');
-      } else if (trip.type === 'going_night_return_afternoon') {
-        newTrip.title = '⛅ TARDE [Volta] -> 🌃 NOITE [Ida]';
-        newTrip.schools = `${itinerary.school_afternoon.name} -> ${itinerary.school_night.name}`;
-        newTrip.start_time = moment(
-          itinerary.school_night.night_arrival,
-        ).format('HH:mm');
-        newTrip.end_time = moment(
-          itinerary.school_afternoon.afternoon_departure,
-        ).format('HH:mm');
-      } else if (trip.type === 'going_night') {
-        newTrip.title = '🌃 NOITE [Ida]';
-        newTrip.schools = `${itinerary.school_night.name}`;
-        newTrip.start_time = moment(
-          itinerary.school_night.night_arrival,
-        ).format('HH:mm');
-      } else if (trip.type === 'return_night') {
-        newTrip.title = '🌃 Noite [Volta]';
-        newTrip.schools = `${itinerary.school_night.name}`;
-        newTrip.end_time = moment(
-          itinerary.school_night.night_departure,
-        ).format('HH:mm');
-      }
-
-      for (let i = 0; i < trip.student_trips.length; i++) {
-        const newEvent = {
-          order: -1,
-          title: '',
-          type: '',
-          location: '',
-          time: '',
-          status: '',
-        };
-
-        newEvent.type = trip.student_trips[i].type;
-
-        if (i === 0) {
-          const start = {
-            order: 0,
-            title: '• Partida',
-            type: '',
-            location:
-              trip.type === 'going_morning'
-                ? `${itinerary.school_morning.default_location.name}`
-                : trip.type === 'return_morning'
-                ? `${itinerary.school_morning.address.name}`
-                : trip.type === 'going_afternoon_return_morning'
-                ? `${itinerary.school_morning.address.name}`
-                : trip.type === 'going_afternoon'
-                ? `${itinerary.school_afternoon.default_location.name}`
-                : trip.type === 'return_afternoon'
-                ? `${itinerary.school_afternoon.address.name}`
-                : trip.type === 'going_night_return_afternoon'
-                ? `${itinerary.school_afternoon.address.name}`
-                : trip.type === 'going_night'
-                ? `${itinerary.school_night.default_location.name}`
-                : trip.type === 'return_night'
-                ? `${itinerary.school_night.address.name}`
-                : '',
-            time:
-              trip.started_at !== null
-                ? moment(trip.started_at).format('HH:mm')
-                : '',
-            status: trip.started_at === null ? 'upcoming' : 'done',
-          };
-
-          newTrip.events.push(start);
-        }
-
-        if (trip.student_trips[i].absent === true) {
-          if (trip.student_trips[i].type === 'going') {
-            newTrip.absents.push(
-              `• ${trip.student_trips[i].student.name} [Responsável: ${trip.student_trips[i].student?.responsible_absence_going?.user?.name}]`,
-            );
-          } else if (trip.student_trips[i].type === 'return') {
-            newTrip.absents.push(
-              `• ${trip.student_trips[i].student.name} [Responsável: ${trip.student_trips[i].student?.responsible_absence_return?.user?.name}]`,
-            );
-          }
-        }
-
-        if (trip.student_trips[i].absent === false) {
-          newEvent.title = `• ${trip.student_trips[i].student.name}`;
-          newEvent.location = trip.student_trips[i].student.address.name;
-          newEvent.order = trip.student_trips[i].order;
-          newEvent.time =
-            trip.student_trips[i].time !== null
-              ? moment(trip.student_trips[i].time).format('HH:mm')
-              : '';
-          (newEvent.status =
-            trip.student_trips[i].time === null ? 'upcoming' : 'done'),
-            newTrip.events.push(newEvent);
-          newEvent.type =
-            trip.student_trips[i].type === 'going'
-              ? ' - Embarque'
-              : ' - Desembarque';
-        }
-
-        if (i === trip.student_trips.length - 1) {
-          const end = {
-            order: trip.student_trips.length - newTrip.absents.length + 1,
-            title: '• Fim da corrida',
-            type: '',
-            location:
-              trip.type === 'going_morning'
-                ? `${itinerary.school_morning.address.name}`
-                : trip.type === 'return_morning'
-                ? `${itinerary.school_morning.default_location.name}`
-                : trip.type === 'going_afternoon_return_morning'
-                ? `${itinerary.school_afternoon.address.name}`
-                : trip.type === 'going_afternoon'
-                ? `${itinerary.school_afternoon.address.name}`
-                : trip.type === 'return_afternoon'
-                ? `${itinerary.school_afternoon.default_location.name}`
-                : trip.type === 'going_night_return_afternoon'
-                ? `${itinerary.school_night.address.name}`
-                : trip.type === 'going_night'
-                ? `${itinerary.school_night.address.name}`
-                : trip.type === 'return_night'
-                ? `${itinerary.school_night.default_location.name}`
-                : '',
-            time:
-              trip.finished_at !== null
-                ? moment(trip.finished_at).format('HH:mm')
-                : '',
-            status: trip.finished_at === null ? 'upcoming' : 'done',
-          };
-
-          newTrip.events.push(end);
-        }
-      }
-
-      newItinerary.trips = newTrip;
-
-      result = newItinerary;
-
-      return { error: false, result };
-    } catch (error) {
-      console.log(error);
       return { error: true, message: error.message };
     }
   }

@@ -10,7 +10,7 @@ export const metadata = {
   title: 'MicroRota',
   description: 'Plataforma para auxílio no transporte de vans e micro-ônibus',
   manifest: '/manifest.json',
-  icons: { icon: ['/favicon.ico'], apple: ['/icon.png'] },
+  icons: { icon: ['/icons/favicon.ico'], apple: ['/icons/icon.png'] },
   themeColor: '#fff',
 };
 

@@ -7,6 +7,10 @@ import { UpdateSchoolDto } from '../school/dto/update-school.dto';
 import { ItinerariesService } from '../itineraries/itineraries.service';
 import { TripsLogicService } from '../trips/tripsLogic.service';
 
+type updateStatusType = {
+  status: boolean;
+};
+
 @Injectable()
 export class SchoolService {
   constructor(
@@ -127,7 +131,6 @@ export class SchoolService {
           id: true,
         },
       });
-
       if (driver === null) {
         throw new Error('no_driver');
       }
@@ -282,13 +285,16 @@ export class SchoolService {
         schools.push(newItem);
       });
 
+      const started =
+        itinerary?.started === undefined ? false : itinerary.started;
+
       return {
         error: false,
         schools,
-        started: itinerary?.started === undefined ? false : itinerary.started,
+        started,
       };
     } catch (error) {
-      return { error: true, message: error };
+      return { error: true, message: error, started: false };
     }
   }
 
@@ -307,9 +313,8 @@ export class SchoolService {
           id: true,
         },
       });
-
-      if (!driver) {
-        throw new Error('Driver not found');
+      if (driver === null) {
+        throw new Error('no_driver');
       }
       // Convertendo datas
       updateSchoolDto = stringToDate(updateSchoolDto);
@@ -351,7 +356,7 @@ export class SchoolService {
         },
       });
 
-      const school = await this.prismaService.school.update({
+      await this.prismaService.school.update({
         where: {
           id: id,
           driver_id: driver.id,
@@ -385,10 +390,6 @@ export class SchoolService {
           },
         },
       });
-
-      if (!school) {
-        throw new Error('school_NotUpdated');
-      }
 
       const itinerary_update = await this.itinerariesService.update(user);
       const trips = await this.tripsLogicService.create(user);
@@ -433,13 +434,13 @@ export class SchoolService {
         throw new Error('trips_or_itinerary_error');
       }
 
-      return { error: false, school };
+      return { error: false };
     } catch (error) {
       return { error: true, message: error.message };
     }
   }
 
-  async updateStatus(user: UserFromJwt, id: string, data: { status: boolean }) {
+  async updateStatus(user: UserFromJwt, id: string, data: updateStatusType) {
     try {
       // Verificando Driver
       const driver = await this.prismaService.driver.findFirst({
@@ -450,12 +451,11 @@ export class SchoolService {
           id: true,
         },
       });
-
-      if (!driver) {
-        throw new Error('Driver not found');
+      if (driver === null) {
+        throw new Error('no_driver');
       }
 
-      const school = await this.prismaService.school.update({
+      await this.prismaService.school.update({
         where: {
           id: id,
           driver_id: driver.id,
@@ -468,10 +468,6 @@ export class SchoolService {
           status: true,
         },
       });
-
-      if (school === null) {
-        throw new Error('school_NotUpdated');
-      }
 
       const itinerary_update = await this.itinerariesService.update(user);
       const trips = await this.tripsLogicService.create(user);
@@ -490,7 +486,7 @@ export class SchoolService {
         throw new Error('trips_or_itinerary_error');
       }
 
-      return { error: false, school };
+      return { error: false };
     } catch (error) {
       return { error: true, message: error.message };
     }
@@ -507,12 +503,11 @@ export class SchoolService {
           id: true,
         },
       });
-
       if (driver === null) {
         throw new Error('no_driver');
       }
 
-      const school = await this.prismaService.school.delete({
+      await this.prismaService.school.delete({
         where: {
           id,
           driver: {
@@ -523,10 +518,6 @@ export class SchoolService {
         },
       });
 
-      if (school === null) {
-        throw new Error('school_NotDeleted');
-      }
-
       const itinerary_update = await this.itinerariesService.update(user);
       const trips = await this.tripsLogicService.create(user);
 
@@ -534,7 +525,7 @@ export class SchoolService {
         throw new Error('trips_or_itinerary_error');
       }
 
-      return { error: false, school };
+      return { error: false };
     } catch (error) {
       return { error: true, message: error.message };
     }

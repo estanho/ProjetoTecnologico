@@ -5,6 +5,12 @@ import { UserFromJwt } from '../auth/models/UserFromJwt';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '../auth/models/Role';
 
+type updateStatusType = {
+  student_id: string;
+  driver_id: string;
+  type: string;
+};
+
 @Controller('trips')
 export class TripsController {
   constructor(private readonly tripsService: TripsService) {}
@@ -32,13 +38,8 @@ export class TripsController {
   updateStatus(
     @CurrentUser() user: UserFromJwt,
     @Param('id') id: string,
-    @Body() data: { trip_id: string; student_id: string },
+    @Body() data: updateStatusType,
   ) {
     return this.tripsService.updateTripStudent(user, id, data);
-  }
-
-  @Get('current')
-  findTrips(@CurrentUser() user: UserFromJwt) {
-    return this.tripsService.findTrips(user);
   }
 }

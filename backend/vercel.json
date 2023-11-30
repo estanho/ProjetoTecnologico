@@ -8,5 +8,9 @@
         "src": "/(.*)",
         "dest": "src/main.ts",
         "methods":["GET","POST","PUT","PATCH","DELETE"]
+    }],
+    "crons":[{
+        "path": "/cronjobs",
+        "schedule": "0 0 * * *"
     }]
 }

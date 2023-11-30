@@ -10,33 +10,36 @@ import {
 } from '@nextui-org/react';
 import toast from 'react-hot-toast';
 import axios from 'axios';
-import error from 'next/error';
+import { errorControl } from '../../utils/warnings';
+import { useRouter } from 'next/navigation';
 
 export default function MyComponent() {
-  const [trips, setTrips] = useState([]);
+  const router = useRouter();
+
+  const [trips, setTrips] = useState<any>([]);
 
   const getList = useCallback(async () => {
     try {
       const { data } = await axios.get(`/api/driver/trip`);
+
       if (data.error === false) {
         setTrips(data.trips);
-        //toast.success('Lista atualizada! 😁');
       } else {
-        console.log(data);
-        throw error;
+        errorControl(data.message);
       }
     } catch (error) {
       toast.error('Ocorreu um erro ao carregar os dados. 😥');
     }
-  }, []);
+  }, [setTrips]);
 
+  // Atualização da lista
   useEffect(() => {
     getList();
   }, [getList]);
 
   const renderList = (trips: any) => {
     return (
-      <Card className="m-2">
+      <Card>
         <CardBody className="p-2">
           <Accordion>
             {trips &&
@@ -50,13 +53,13 @@ export default function MyComponent() {
                     </div>
                   }
                 >
-                  {day.trips &&
+                  {day.trips && day.trips.length > 0 ? (
                     day.trips.map((trip: any, turnIndex: number) => (
                       <div key={turnIndex}>
                         <div className="flex justify-between items-center">
                           <h1 className="text-lg font-bold">{trip.title}</h1>
                           <div>
-                            <p className="text-sm text-gray-800">
+                            <p className="text-sm text-end text-gray-800">
                               Viagem de ~{trip.duration}
                             </p>
                             <p className="text-sm text-end text-gray-400">
@@ -152,7 +155,19 @@ export default function MyComponent() {
                           </div>
                         ))}
                       </div>
-                    ))}
+                    ))
+                  ) : (
+                    <div>
+                      <p className="flex justify-center m-2 text-center text-gray-500">
+                        Ocorreu um erro ao gerar a viagem, verifique os dados
+                        inseridos em 'Escolas' e 'Estudantes'.
+                      </p>
+                      <p className="flex justify-center m-2 text-center text-gray-600 font-semibold">
+                        Ao cadastrar as Escolas e Estudantes, o sistema deve
+                        exibir apenas o aviso de sucesso.
+                      </p>
+                    </div>
+                  )}
                 </AccordionItem>
               ))}
           </Accordion>
@@ -162,15 +177,29 @@ export default function MyComponent() {
   };
 
   return (
-    <div>
+    <div className="m-4">
       <div className="flex items-center justify-center mt-20 gap-20">
-        <h1 className="text-center mt-8 mb-6 text-xl font-bold">Roteiro</h1>
-        <Button className="justify-center" onPress={() => {}}>
-          Visualizar Mapa
+        <h1 className="mt-8 mb-6 text-xl font-bold">🚐 Roteiro de Viagens</h1>
+        <Button
+          className="font-semibold"
+          color="primary"
+          onPress={() => {
+            router.push('/driver/map');
+          }}
+        >
+          Mapa
         </Button>
       </div>
       <div className="flex items-center justify-center">
-        <div className="max-w-screen-md w-full ">{renderList(trips)}</div>
+        <div className="max-w-screen-md w-full ">
+          {trips.length > 0 ? (
+            renderList(trips)
+          ) : (
+            <p className="mt-12 flex justify-center text-center text-gray-500">
+              Sem registros de viagens no momento.
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -10,14 +10,20 @@ type createNotification = {
   name_student: string;
 };
 
+type typeSend = {
+  id: string;
+  text: string;
+};
+
 @Injectable()
 export class NotificationLogicService {
   constructor(private prismaService: PrismaService) {}
 
   async create(data: createNotification) {
     try {
-      // Driver
+      // Enviar para Driver (Sabe pra quem enviar)
       if (data.user_id) {
+        // Criando notificação no banco de dados
         const notification = await this.prismaService.notification.create({
           data: {
             type: data.type,
@@ -34,12 +40,11 @@ export class NotificationLogicService {
             },
           },
         });
-
         if (notification === null) {
           throw new Error('driver_noticationCreated');
         }
 
-        let text;
+        let text = '';
 
         if (data.type === 'going_true' || data.type === 'return_true') {
           text =
@@ -55,29 +60,42 @@ export class NotificationLogicService {
               ? `Estudante ${data.name_student} marcado como AUSENTE na IDA por ${data.name}`
               : `Estudante ${data.name_student} marcado como AUSENTE na VOLTA por ${data.name}`;
         }
-
+        // Enviando notificação
         await this.send({
           id: data.user_id,
           text,
         });
 
-        // Student e Responsible
+        // Student e Responsible (Não sabe quem são os Responsibles e se o Student está registrado | data.user_id = null)
       } else {
         // Encontrando Student
         const student = await this.prismaService.student.findFirst({
+          where: {
+            id: data.student_id,
+          },
           select: {
+            user_id: true,
             registered: true,
           },
         });
-
         if (student === null) {
           throw new Error('no_student');
         }
-        // Só gerar notificação para student registrados
+
+        let text = '';
+
+        if (data.type === 'embarked') {
+          text = `Estudante ${data.name_student} embarcou no transporte do motorista ${data.name}`;
+        } else if (data.type === 'disembarked') {
+          text = `Estudante ${data.name_student} desembarcou do transporte do motorista ${data.name}`;
+        }
+
+        // Gerando notificações para Students registrados
         if (student.registered) {
           await this.prismaService.notification.create({
             data: {
               type: data.type,
+              name: data.name,
               student: {
                 connect: {
                   id: data.student_id,
@@ -85,15 +103,23 @@ export class NotificationLogicService {
               },
               user: {
                 connect: {
-                  id: data.student_id,
+                  id: student.user_id,
                 },
               },
             },
           });
+
+          // Enviando notificação
+          await this.send({
+            id: student.user_id,
+            text,
+          });
         }
 
+        // Encontra os responsibles
         const responsibles = await this.prismaService.responsible.findMany({
           where: {
+            registered: true,
             students: {
               some: {
                 id: data.student_id,
@@ -102,10 +128,12 @@ export class NotificationLogicService {
           },
         });
 
+        // Criando e enviando notificações
         responsibles.forEach(async (responsible) => {
           await this.prismaService.notification.create({
             data: {
               type: data.type,
+              name: data.name,
               student: {
                 connect: {
                   id: data.student_id,
@@ -118,6 +146,11 @@ export class NotificationLogicService {
               },
             },
           });
+
+          await this.send({
+            id: responsible.user_id,
+            text,
+          });
         });
       }
 
@@ -127,8 +160,9 @@ export class NotificationLogicService {
     }
   }
 
-  async send(data: any) {
+  async send(data: typeSend) {
     try {
+      // Encontrando os subscriptions
       const subscriptions =
         await this.prismaService.notification_Subscription.findMany({
           where: {
@@ -136,6 +170,7 @@ export class NotificationLogicService {
           },
         });
 
+      // Enviando para os subscriptions
       for (let i = 0; i < subscriptions.length; i++) {
         await WebPush.sendNotification(
           JSON.parse(JSON.stringify(subscriptions[i].subscription)),
@@ -143,7 +178,7 @@ export class NotificationLogicService {
         );
       }
 
-      return { error: false, subscriptions };
+      return { error: false };
     } catch (error) {
       console.log(error);
       return { error: true, message: error };

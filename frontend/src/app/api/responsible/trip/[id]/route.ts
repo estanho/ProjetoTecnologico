@@ -4,33 +4,30 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 export async function PATCH(request: Request) {
-  const supabase = createRouteHandlerClient({ cookies });
-
-  const { data } = await supabase.auth.getSession();
-
-  const body = await request.json();
-
-  const segments = request.url.split('/');
-  const id = segments[segments.length - 1];
-
-  let result;
-
   try {
+    const supabase = createRouteHandlerClient({ cookies });
+    const { data } = await supabase.auth.getSession();
+
+    const body = await request.json();
+
+    const segments = request.url.split('/');
+    const id = segments[segments.length - 1];
+
     const config = {
       headers: { Authorization: `Bearer ${data.session?.access_token}` },
     };
-    result = await axios.patch(
+    const result = await axios.patch(
       `${process.env.API_URL}/trips/${id}`,
       body,
       config,
     );
 
-    if (result.data.error === true) {
-      throw new Error(result.data.message);
+    if (result.data.error === false) {
+      return NextResponse.json({ error: false });
+    } else {
+      return NextResponse.json({ error: true, message: result.data.message });
     }
-  } catch (err) {
-    return NextResponse.json({ error: true });
+  } catch (error) {
+    return NextResponse.json({ error: true, message: 'API' });
   }
-
-  return NextResponse.json({ error: false });
 }

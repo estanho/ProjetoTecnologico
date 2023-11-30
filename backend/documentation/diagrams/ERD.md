@@ -145,12 +145,15 @@ webauthn webauthn
     String id "🗝️"
     Shift shift 
     TypeTrip type 
-    Json path "❓"
+    String path "❓"
     Float duration "❓"
     Float km "❓"
     DateTime estimated "❓"
     DateTime started_at "❓"
     DateTime finished_at "❓"
+    Boolean rollCall "❓"
+    Float latitude "❓"
+    Float longitude "❓"
     DateTime created_at 
     }
   
@@ -163,6 +166,7 @@ webauthn webauthn
     TypeTripStudent type "❓"
     DateTime time "❓"
     DateTime created_at 
+    Boolean rollCallPresent "❓"
     }
   
 

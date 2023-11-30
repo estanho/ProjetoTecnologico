@@ -58,7 +58,7 @@ export class TripTimeService {
           (total, leg) => total + leg.distance.value,
           0,
         );
-        // Aplica 2 min por student e mais 10 minutos (Prevenção de atrasos)
+        // Aplica 2 min por student e mais 5 minutos (Prevenção de atrasos)
         totalDurationInSeconds =
           totalDurationInSeconds + students_length * 120 + 300;
         // Cria a duração total em milissegundos

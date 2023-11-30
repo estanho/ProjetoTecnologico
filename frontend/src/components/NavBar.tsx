@@ -114,11 +114,13 @@ export default function App({ user, role }: any) {
                 <p className="font-semibold">Logado com</p>
                 <p className="font-semibold">{user.email}</p>
               </DropdownItem>
-              <DropdownItem key="configurations" aria-label="Configurações">
-                <Link className="w-full" color="foreground" href="/account">
-                  Configurações
-                </Link>
-              </DropdownItem>
+              {role && (
+                <DropdownItem key="configurations" aria-label="Configurações">
+                  <Link className="w-full" color="foreground" href="/account">
+                    Configurações
+                  </Link>
+                </DropdownItem>
+              )}
               <DropdownItem key="logout" aria-label="Sair">
                 <LogoutButton />
               </DropdownItem>

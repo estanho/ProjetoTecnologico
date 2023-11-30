@@ -2,6 +2,7 @@ import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import NavBar from '../components/NavBar';
 import { Notification } from './utils/notification';
+import Homepage from './homepage';
 
 export default async function Index() {
   const supabase = createServerComponentClient({ cookies });
@@ -12,8 +13,9 @@ export default async function Index() {
 
   return (
     <div>
+      {session?.user && <Notification session={session} />}
       <NavBar user={session?.user} role={session?.user.user_metadata.role} />
-      {session?.user && (<Notification session={session} />)}
+      <Homepage />
     </div>
   );
 }

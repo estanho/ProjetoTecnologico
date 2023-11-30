@@ -92,7 +92,7 @@ export default function SignupForm() {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen">
+    <div className="flex items-center justify-center h-screen mt-14">
       <Card className="max-w-xl w-full">
         <CardHeader className="justify-center">
           <p className="text-xl">Cadastrar</p>
