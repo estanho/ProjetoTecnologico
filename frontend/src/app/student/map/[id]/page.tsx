@@ -1,12 +1,12 @@
 import Map from './Map';
 import NavBar from '../../../../components/NavBar';
 import { redirect } from 'next/navigation';
-import supabaseServer from '../../../utils/supabaseServer';
+import { createServerSupabaseClient } from '../../../utils/supabaseServer';
 
 export default async function NewRoutePage({ params }: any) {
   const {
     data: { session },
-  } = await supabaseServer().auth.getSession();
+  } = await createServerSupabaseClient().auth.getSession();
 
   if (!session) {
     return redirect('/auth/login');

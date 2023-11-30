@@ -1,12 +1,12 @@
 import NavBar from '../../../components/NavBar';
 import SchoolList from './SchoolList';
-import supabaseServer from '../../utils/supabaseServer';
+import { createServerSupabaseClient } from '../../utils/supabaseServer';
 import { redirect } from 'next/navigation';
 
 export default async function Index() {
   const {
     data: { session },
-  } = await supabaseServer().auth.getSession();
+  } = await createServerSupabaseClient().auth.getSession();
 
   if (!session) {
     return redirect('/auth/login');

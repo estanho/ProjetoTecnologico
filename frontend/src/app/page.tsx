@@ -1,12 +1,12 @@
 import NavBar from '../components/NavBar';
 import { Notification } from './utils/notification';
 import Homepage from './homepage';
-import supabaseServer from './utils/supabaseServer';
+import { createServerSupabaseClient } from './utils/supabaseServer';
 
 export default async function Index() {
   const {
     data: { session },
-  } = await supabaseServer().auth.getSession();
+  } = await createServerSupabaseClient().auth.getSession();
 
   return (
     <div>

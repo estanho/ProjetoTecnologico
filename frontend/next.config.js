@@ -11,7 +11,10 @@ const nextConfig = {
     dest: 'public',
     register: true,
     skipWaiting: true,
-  })
+  }),
+  experimental: {
+    serverActions: true,
+  }
 };
 
 module.exports = nextConfig;
