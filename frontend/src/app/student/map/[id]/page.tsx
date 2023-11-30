@@ -3,8 +3,6 @@ import NavBar from '../../../../components/NavBar';
 import { redirect } from 'next/navigation';
 import supabaseServer from '../../../utils/supabaseServer';
 
-export const dynamic = 'force-static';
-
 export default async function NewRoutePage({ params }: any) {
   const {
     data: { session },
