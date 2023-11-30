@@ -1,12 +1,15 @@
 import NavBar from '../components/NavBar';
 import { Notification } from './utils/notification';
 import Homepage from './homepage';
-import { createServerSupabaseClient } from './utils/supabaseServer';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 
 export default async function Index() {
+  const supabase = createServerComponentClient({ cookies });
+
   const {
     data: { session },
-  } = await createServerSupabaseClient().auth.getSession();
+  } = await supabase.auth.getSession();
 
   return (
     <div>

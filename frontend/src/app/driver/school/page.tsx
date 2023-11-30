@@ -1,12 +1,15 @@
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 import NavBar from '../../../components/NavBar';
 import SchoolList from './SchoolList';
-import { createServerSupabaseClient } from '../../utils/supabaseServer';
 import { redirect } from 'next/navigation';
 
 export default async function Index() {
+  const supabase = createServerComponentClient({ cookies });
+
   const {
     data: { session },
-  } = await createServerSupabaseClient().auth.getSession();
+  } = await supabase.auth.getSession();
 
   if (!session) {
     return redirect('/auth/login');

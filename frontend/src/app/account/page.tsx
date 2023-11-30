@@ -1,12 +1,15 @@
 import AccountForm from './account-form';
 import NavBar from '../../components/NavBar';
 import { redirect } from 'next/navigation';
-import { createServerSupabaseClient } from '../utils/supabaseServer';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 
 export default async function Account() {
+  const supabase = createServerComponentClient({ cookies });
+
   const {
     data: { session },
-  } = await createServerSupabaseClient().auth.getSession();
+  } = await supabase.auth.getSession();
 
   if (!session) {
     return redirect('/auth/login');
