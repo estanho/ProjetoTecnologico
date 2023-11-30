@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Card, CardBody, Button } from '@nextui-org/react';
+
 import { useRouter } from 'next/navigation';
 
 export default function MyComponent({ student_name }: any) {

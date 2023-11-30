@@ -11,7 +11,8 @@ import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import Trips from './TripList';
-import { errorControl } from '../../../utils/warnings';
+import { errorControl } from '../../utils/warnings';
+import { useSearchParams } from 'next/navigation';
 
 // Gravataí
 const center = { lat: -29.94377411359114, lng: -50.97560462754559 };
@@ -29,7 +30,10 @@ type Location = {
   lng: number;
 };
 
-export default function Map({ student_id }: any) {
+export default function Map() {
+  const searchParams = useSearchParams();
+  const student_id = searchParams.get('id');
+
   const [googleMap, setGoogleMap] = useState<google.maps.Map>();
   const [currentLocation, setCurrentLocation] = useState<Location | null>(null);
   const [selectedMarker, setSelectedMarker] = useState<any>(null);
@@ -38,7 +42,7 @@ export default function Map({ student_id }: any) {
 
   const getInfo = useCallback(async () => {
     try {
-      const { data } = await axios.get(`/api/responsible/map/${student_id}`);
+      const { data } = await axios.get(`/api/student/map/${student_id}`);
 
       if (data.error === false) {
         setPoints(data.result.points);

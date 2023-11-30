@@ -1,6 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   Card,
@@ -14,6 +13,8 @@ import toast from 'react-hot-toast';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
 import { errorControl } from '../../utils/warnings';
+
+import { useRouter } from 'next/navigation';
 
 export default function MyComponent() {
   const router = useRouter();
@@ -135,7 +136,7 @@ export default function MyComponent() {
             size="sm"
             color="primary"
             onPress={() => {
-              router.push(`/responsible/map/${student.id}`);
+              router.push(`/responsible/map?id=${student.id}`);
             }}
           >
             Visualizar Mapa

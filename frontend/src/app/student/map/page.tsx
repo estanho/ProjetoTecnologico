@@ -1,9 +1,9 @@
 import Map from './Map';
-import NavBar from '../../../../components/NavBar';
+import NavBar from '../../../components/NavBar';
 import { redirect } from 'next/navigation';
-import { createServerSupabaseClient } from '../../../utils/supabaseServer';
+import { createServerSupabaseClient } from '../../utils/supabaseServer';
 
-export default async function NewRoutePage({ params }: any) {
+export default async function NewRoutePage() {
   const {
     data: { session },
   } = await createServerSupabaseClient().auth.getSession();
@@ -15,7 +15,7 @@ export default async function NewRoutePage({ params }: any) {
   return (
     <div className="h-full">
       <NavBar user={session?.user} role={session?.user.user_metadata.role} />
-      <Map student_id={params.id} />
+      <Map />
     </div>
   );
 }
