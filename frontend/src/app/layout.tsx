@@ -1,11 +1,10 @@
+export const dynamic = 'force-dynamic';
+
 import './globals.css';
 import { Toaster } from 'react-hot-toast';
 
 import { Providers as ProviderNextUI } from './ProviderNextUI';
 import SupabaseProvider from './ProviderSupabase';
-
-export const dynamic = 'force-dynamic';
-export const dynamicParams = false;
 
 export const metadata = {
   title: 'MicroRota',
