@@ -12,6 +12,8 @@ export const metadata = {
   themeColor: '#fff',
 };
 
+export const dynamic = 'force-dynamic';
+
 export default function RootLayout({
   children,
 }: {
