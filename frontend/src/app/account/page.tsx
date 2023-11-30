@@ -1,7 +1,7 @@
 import AccountForm from './account-form';
 import NavBar from '../../components/NavBar';
 import { redirect } from 'next/navigation';
-import { createServerSupabaseClient } from '../../components/supabaseServer';
+import { createServerSupabaseClient } from '../utils/supabaseServer';
 
 export default async function Account() {
   const {

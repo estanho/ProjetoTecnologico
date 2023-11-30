@@ -1,7 +1,7 @@
 import NavBar from '../components/NavBar';
 import { Notification } from './utils/notification';
 import Homepage from './homepage';
-import { createServerSupabaseClient } from '../components/supabaseServer';
+import { createServerSupabaseClient } from './utils/supabaseServer';
 
 export default async function Index() {
   const {

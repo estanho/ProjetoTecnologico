@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import NavBar from '../../../components/NavBar';
 import StudentList from './StudentList';
-import { createServerSupabaseClient } from '../../../components/supabaseServer';
+import { createServerSupabaseClient } from '../../utils/supabaseServer';
 
 export default async function Index() {
   const {
