@@ -225,8 +225,8 @@ export default function MyComponent() {
                                       event.status === 'done'
                                         ? 'bg-green-100'
                                         : event.status === 'absent'
-                                        ? 'bg-red-100'
-                                        : 'bg-gray-100'
+                                          ? 'bg-red-100'
+                                          : 'bg-gray-100'
                                     }`}
                                   >
                                     <h3
@@ -234,8 +234,8 @@ export default function MyComponent() {
                                         event.status === 'done'
                                           ? 'text-green-700'
                                           : event.status === 'absent'
-                                          ? 'text-red-500'
-                                          : 'text-gray-700'
+                                            ? 'text-red-500'
+                                            : 'text-gray-700'
                                       }`}
                                     >
                                       <span

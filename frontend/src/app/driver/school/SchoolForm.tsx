@@ -20,7 +20,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { setHours, setMinutes, parse, format, parseISO } from 'date-fns';
 import axios from 'axios';
-import error from 'next/error';
 import { errorControl } from '../../utils/warnings';
 
 const isTimeFormat = (value: any) => {

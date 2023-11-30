@@ -12,6 +12,7 @@ import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import Trips from './TripList';
 import { errorControl } from '../../utils/warnings';
+
 import { useSearchParams } from 'next/navigation';
 
 // Gravataí

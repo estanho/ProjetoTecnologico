@@ -1,8 +1,8 @@
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 import NavBar from '../../../components/NavBar';
 import Trips from './TripList';
 import { redirect } from 'next/navigation';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
 
 export default async function Index() {
   const supabase = createServerComponentClient({ cookies });

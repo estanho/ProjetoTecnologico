@@ -11,7 +11,6 @@ export const metadata = {
   description: 'Plataforma para auxílio no transporte de vans e micro-ônibus',
   manifest: '/manifest.json',
   icons: { icon: ['/icons/favicon.ico'], apple: ['/icons/icon.png'] },
-  themeColor: '#fff',
 };
 
 export default function RootLayout({
