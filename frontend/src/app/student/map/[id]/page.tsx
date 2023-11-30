@@ -1,3 +1,5 @@
+'use server';
+
 import Map from './Map';
 import NavBar from '../../../../components/NavBar';
 import { redirect } from 'next/navigation';
