@@ -4,6 +4,8 @@ import NavBar from '../components/NavBar';
 import { Notification } from './utils/notification';
 import Homepage from './homepage';
 
+export const dynamic = 'force-dynamic';
+
 export default async function Index() {
   const supabase = createServerComponentClient({ cookies });
 

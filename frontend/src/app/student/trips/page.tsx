@@ -4,6 +4,8 @@ import NavBar from '../../../components/NavBar';
 import Trips from './TripList';
 import { redirect } from 'next/navigation';
 
+export const dynamic = 'force-dynamic';
+
 export default async function Index() {
   const supabase = createServerComponentClient({ cookies });
 

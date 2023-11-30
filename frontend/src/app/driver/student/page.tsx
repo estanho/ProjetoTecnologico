@@ -4,6 +4,8 @@ import { redirect } from 'next/navigation';
 import NavBar from '../../../components/NavBar';
 import StudentList from './StudentList';
 
+export const dynamic = 'force-dynamic';
+
 export default async function Index() {
   const supabase = createServerComponentClient({ cookies });
 
