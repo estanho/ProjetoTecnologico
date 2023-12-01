@@ -12,7 +12,7 @@ export default async function Index() {
 
   return (
     <div>
-      <NavBar />
+      <NavBar user={user} />
       <SignupForm user={user} />
     </div>
   );

@@ -18,6 +18,7 @@ import { z } from 'zod';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import error from 'next/error';
+import LogoutButton from '../../../components/LogoutButton';
 
 const schemaData = z.object({
   name: z.string().min(5, 'O nome deve ser completo.'),
@@ -101,7 +102,7 @@ export default function SignupForm({ user }: any) {
               variant="faded"
               label="Nome"
               labelPlacement="outside"
-              placeholder="Digite seu nome completo"
+              placeholder="Digite seu nome"
               className="mb-6"
               onChange={(e) => setName(e.target.value)}
               isRequired

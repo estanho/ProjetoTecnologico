@@ -83,12 +83,12 @@ export default function Homepage() {
               A plataforma irá solicitar acesso para exibir notificações e
               acessar a localização do usuário quando necessário.
             </small>
-            <div className="mt-4 text-center space-x-2">
-              <small className="text-gray-400">Computador</small>
+            <div className="hidden md:flex flex-col mt-4 text-center items-center">
+              <small className="text-gray-400">Apenas Computador</small>
               <h1 className="mb-4 font-semibold">Teste de notificação:</h1>
               <Button
                 color="primary"
-                className="font-semibold"
+                className="font-semibold w-0"
                 onClick={() => {
                   window.Notification.requestPermission((permission) => {
                     if (permission === 'granted') {

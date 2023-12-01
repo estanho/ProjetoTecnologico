@@ -181,6 +181,7 @@ export default function MyComponent() {
       <div className="flex items-center justify-center mt-20 gap-20">
         <h1 className="mt-8 mb-6 text-xl font-bold">🚐 Roteiro de Viagens</h1>
         <Button
+          isDisabled={trips.length === 0}
           className="font-semibold"
           color="primary"
           onPress={() => {
