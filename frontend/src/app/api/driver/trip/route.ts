@@ -3,6 +3,8 @@ import axios from 'axios';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -24,6 +26,6 @@ export async function GET() {
       return NextResponse.json({ error: true, message: result.data.message });
     }
   } catch (error) {
-    return NextResponse.json({ error: true, message: error });
+    return NextResponse.json({ error: true, message: 'API' });
   }
 }
