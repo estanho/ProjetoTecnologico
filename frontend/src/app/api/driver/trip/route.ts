@@ -8,6 +8,8 @@ export async function GET() {
     const supabase = createRouteHandlerClient({ cookies });
     const { data } = await supabase.auth.getSession();
 
+    console.log(data);
+
     const config = {
       headers: { Authorization: `Bearer ${data.session?.access_token}` },
     };
