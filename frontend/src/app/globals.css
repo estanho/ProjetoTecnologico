@@ -1,8 +1,0 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-@tailwind screens;
-
-.map-label {
-  margin-top: 12px;
-}
