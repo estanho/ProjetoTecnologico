@@ -8,7 +8,6 @@ export const dynamic = 'force-dynamic';
 export async function GET() {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-
     const { data } = await supabase.auth.getSession();
 
     const config = {
@@ -23,7 +22,7 @@ export async function GET() {
     } else {
       return NextResponse.json({ error: true, message: result.data.message });
     }
-  } catch (err) {
+  } catch (error) {
     return NextResponse.json({ error: true, message: 'API' });
   }
 }

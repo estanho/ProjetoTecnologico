@@ -9,7 +9,7 @@ import {
   InfoWindow,
 } from '@react-google-maps/api';
 import axios from 'axios';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { convertDirectionsResponseToDirectionsResult } from '../../utils/convert';
 import toast from 'react-hot-toast';
 import Trips from './TripList';

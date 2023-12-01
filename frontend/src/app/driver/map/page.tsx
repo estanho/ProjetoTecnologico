@@ -1,7 +1,8 @@
-import Map from './Map';
-import NavBar from '../../../components/NavBar';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import NavBar from '../../../components/NavBar';
+import Map from './Map';
 
 export default async function NewRoutePage() {
   const supabase = createServerComponentClient({ cookies });
@@ -9,6 +10,10 @@ export default async function NewRoutePage() {
   const {
     data: { session },
   } = await supabase.auth.getSession();
+
+  if (!session) {
+    return redirect('/auth/login');
+  }
 
   return (
     <div className="h-full">

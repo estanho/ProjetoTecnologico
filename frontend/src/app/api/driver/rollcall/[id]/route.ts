@@ -18,7 +18,6 @@ export async function PATCH(request: Request) {
     const config = {
       headers: { Authorization: `Bearer ${data.session?.access_token}` },
     };
-
     const result = await axios.patch(
       `${process.env.API_URL}/rollcall/${id}`,
       body,

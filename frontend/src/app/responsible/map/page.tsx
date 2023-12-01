@@ -1,10 +1,10 @@
-import Map from './Map';
-import NavBar from '../../../../components/NavBar';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import NavBar from '../../../components/NavBar';
+import Map from './Map';
 
-export default async function NewRoutePage({ params }: any) {
+export default async function NewRoutePage() {
   const supabase = createServerComponentClient({ cookies });
 
   const {
@@ -18,7 +18,7 @@ export default async function NewRoutePage({ params }: any) {
   return (
     <div className="h-full">
       <NavBar user={session?.user} role={session?.user.user_metadata.role} />
-      <Map student_id={params.id} />
+      <Map />
     </div>
   );
 }

@@ -1,6 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   Card,
@@ -13,6 +12,8 @@ import {
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import { errorControl } from '../../utils/warnings';
+
+import { useRouter } from 'next/navigation';
 
 export default function MyComponent() {
   const router = useRouter();
@@ -51,7 +52,7 @@ export default function MyComponent() {
             size="sm"
             color="primary"
             onPress={() => {
-              router.push(`/student/map/${student.id}`);
+              router.push(`/student/map?id=${student.id}`);
             }}
           >
             Visualizar Mapa
@@ -140,8 +141,8 @@ export default function MyComponent() {
                                       event.status === 'done'
                                         ? 'bg-green-100'
                                         : event.status === 'absent'
-                                        ? 'bg-red-100'
-                                        : 'bg-gray-100'
+                                          ? 'bg-red-100'
+                                          : 'bg-gray-100'
                                     }`}
                                   >
                                     <h3
@@ -149,8 +150,8 @@ export default function MyComponent() {
                                         event.status === 'done'
                                           ? 'text-green-700'
                                           : event.status === 'absent'
-                                          ? 'text-red-500'
-                                          : 'text-gray-700'
+                                            ? 'text-red-500'
+                                            : 'text-gray-700'
                                       }`}
                                     >
                                       <span
