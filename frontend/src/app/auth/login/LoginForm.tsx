@@ -16,13 +16,13 @@ export default function SignupForm() {
   const { supabase } = useSupabase();
 
   return (
-    <div className="flex items-center justify-center h-screen mt-14">
-      <Card className="max-w-xl w-full">
+    <div className="flex items-center justify-center h-screen mt-20">
+      <Card className="max-w-md w-full p-6">
         <CardHeader className="justify-center">
           <p className="text-xl">Login</p>
         </CardHeader>
         <Divider />
-        <CardBody className="p-12">
+        <CardBody>
           <form
             className="flex-1 flex flex-col w-full justify-center"
             action="/api/auth/sign-in"

@@ -92,13 +92,13 @@ export default function SignupForm() {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen mt-14">
-      <Card className="max-w-xl w-full">
+    <div className="flex items-center justify-center h-screen mt-32">
+      <Card className="max-w-md w-full p-6">
         <CardHeader className="justify-center">
           <p className="text-xl">Cadastrar</p>
         </CardHeader>
         <Divider />
-        <CardBody className="p-12">
+        <CardBody>
           <form onSubmit={handleSubmit(handleFormSubmit)}>
             <Input
               {...register('name')}
@@ -106,8 +106,8 @@ export default function SignupForm() {
               variant="faded"
               label="Nome"
               labelPlacement="outside"
-              placeholder="Digite seu nome completo"
-              className="mb-6"
+              placeholder="Digite seu nome"
+              className="mb-12"
               onChange={(e) => setName(e.target.value)}
               isRequired
               errorMessage={errors.name && errors.name.message}
@@ -154,7 +154,7 @@ export default function SignupForm() {
                 label="Perfil:"
                 name="perfil"
                 orientation="horizontal"
-                className="mb-6"
+                className="mb-12"
                 isRequired
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
