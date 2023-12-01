@@ -108,8 +108,13 @@ export default function Homepage() {
       </div>
       <div className="flex items-center justify-center mt-16">
         <div className="max-w-screen-md w-full">
-          <Tabs aria-label="Opções" color="primary">
-            <Tab key="all" title="Informações Gerais">
+          <Tabs
+            aria-label="Opções"
+            color="primary"
+            size="sm"
+            className="w-full gap-0"
+          >
+            <Tab key="all" title="Informações">
               <Card>
                 <CardBody className="bg-gray-100">
                   <div className="text-justify">
