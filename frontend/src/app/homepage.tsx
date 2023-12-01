@@ -84,6 +84,7 @@ export default function Homepage() {
               acessar a localização do usuário quando necessário.
             </small>
             <div className="mt-4 text-center space-x-2">
+              <small className="text-gray-300">Computador</small>
               <h1 className="mb-4 font-semibold">Teste de notificação:</h1>
               <Button
                 color="primary"
