@@ -2,6 +2,7 @@ import './globals.css';
 import { Toaster } from 'react-hot-toast';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 import { Providers as ProviderNextUI } from './ProviderNextUI';
 import SupabaseProvider from './ProviderSupabase';

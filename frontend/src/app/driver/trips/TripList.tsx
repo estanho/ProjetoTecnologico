@@ -11,8 +11,11 @@ import {
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import { errorControl } from '../../utils/warnings';
+import { useRouter } from 'next/navigation';
 
 export default function MyComponent() {
+  const router = useRouter();
+
   const [trips, setTrips] = useState<any>([]);
 
   const getList = useCallback(async () => {
@@ -181,7 +184,7 @@ export default function MyComponent() {
           className="font-semibold"
           color="primary"
           onPress={() => {
-            window.location.href = '/driver/map';
+            router.push('/driver/map');
           }}
         >
           Mapa
