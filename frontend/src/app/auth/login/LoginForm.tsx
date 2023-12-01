@@ -31,7 +31,7 @@ export default function SignupForm() {
             <Messages />
 
             <Input
-              className="mb-6 mt-6"
+              className="mb-6"
               size="md"
               type="email"
               name="email"

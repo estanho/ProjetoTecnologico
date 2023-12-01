@@ -92,7 +92,7 @@ export default function SignupForm() {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen mt-32">
+    <div className="flex items-center justify-center h-screen mt-20">
       <Card className="max-w-md w-full p-6">
         <CardHeader className="justify-center">
           <p className="text-xl">Cadastrar</p>
@@ -107,7 +107,7 @@ export default function SignupForm() {
               label="Nome"
               labelPlacement="outside"
               placeholder="Digite seu nome"
-              className="mb-12"
+              className="mb-6"
               onChange={(e) => setName(e.target.value)}
               isRequired
               errorMessage={errors.name && errors.name.message}
