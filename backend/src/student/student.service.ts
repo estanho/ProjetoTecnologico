@@ -57,6 +57,13 @@ export class StudentService {
             id: student.id,
           },
         });
+
+        try {
+          await this.tripsLogicService.create(user);
+        } catch (error) {
+          throw new Error('trips_error');
+        }
+
         throw new Error('trips_error');
       }
 
@@ -374,6 +381,12 @@ export class StudentService {
             id: student.id,
           },
         });
+
+        try {
+          await this.tripsLogicService.create(user);
+        } catch (error) {
+          throw new Error('trips_error');
+        }
 
         throw new Error('trips_error');
       }

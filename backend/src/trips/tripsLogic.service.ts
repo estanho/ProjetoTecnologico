@@ -92,7 +92,7 @@ export class TripsLogicService {
       if (itinerary === null) {
         throw new Error('no_itinerary');
       }
-      // Pegando as trips em caso de errro para excluir dps
+      // Pegando as trips em caso de erro para excluir dps
       const trips = await this.prismaService.trip.findMany({
         where: {
           itinerary_id: itinerary.id,
@@ -575,6 +575,7 @@ export class TripsLogicService {
           id: true,
         },
       });
+
       if (trips.length > 0) {
         const arrayDeIds = trips.map((objeto) => objeto.id);
         await this.prismaService.trip.deleteMany({

@@ -1,154 +1,57 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   Card,
   CardBody,
   Accordion,
   AccordionItem,
-  Button,
   Chip,
+  Button,
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@nextui-org/react';
 import toast from 'react-hot-toast';
 import axios from 'axios';
-import debounce from 'lodash.debounce';
 import { errorControl } from '../../utils/warnings';
 import { InfoIcon } from '../../../components/icons/InfoIcon';
 
 export default function MyComponent() {
-  const router = useRouter();
-
-  const [loading, setLoading] = useState(false);
-  const [students, setStudents] = useState([]);
+  const [student, setStudent] = useState([]);
 
   const getList = useCallback(async () => {
     try {
-      const { data } = await axios.get(`/api/responsible/trip`);
+      const { data } = await axios.get(`/api/student/historic`);
 
       if (data.error === false) {
-        setStudents(data.students);
+        setStudent(data.student);
       } else {
         errorControl(data.message);
       }
     } catch (error) {
       toast.error('Ocorreu um erro ao carregar os dados. 😥');
     }
-  }, [setStudents]);
+  }, [setStudent]);
 
   // Atualização da lista
   useEffect(() => {
     getList();
-  }, [getList, loading]);
+  }, [getList]);
 
-  const updateStatus = async (item: any) => {
-    try {
-      const { data } = await axios.patch(
-        `/api/responsible/trip/${item.trip_id}`,
-        {
-          student_id: item.student_id,
-          driver_id: item.driver_id,
-          type: item.type,
-        },
-      );
-      if (data.error === false) {
-        //
-      } else {
-        errorControl(data.message);
-      }
-    } catch (error) {
-      throw new Error('Erro ao tentar acessar a API.');
-    }
-    setLoading(false);
-  };
-
-  const debouncedUpdateStatus = debounce(async (item) => {
-    toast.promise(updateStatus(item), {
-      loading: 'Aguarde... ⏳',
-      success: 'Item alterado com sucesso! 👍🏻',
-      error: 'Não foi possível realizar a alteração. 😥',
-    });
-  }, 1000);
-
-  const renderList = (student: any, index: any) => {
+  const renderList = (student: any) => {
     return (
-      <div key={index}>
+      <div>
         <div className="flex flex-col justify-between gap-2 items-center sm:flex-row m-6">
           <h1 className="text-xl font-semibold mb-4 lg:m-0">
             {' '}
             🤓 {student.name}
           </h1>
-          <div className="flex items-center gap-4">
-            <h1 className="font-medium text-gray-700 text-sm">
-              Marcar ausência:
-            </h1>
-            <Button
-              isLoading={loading}
-              className="font-medium"
-              size="sm"
-              color={
-                student.itineraries[0]?.trips[0].events[0].status === 'absent'
-                  ? 'danger'
-                  : 'success'
-              }
-              isDisabled={
-                student.itineraries[0]?.trips[0]?.started === '' ? false : true
-              }
-              onPress={() => {
-                setLoading(true);
-                debouncedUpdateStatus({
-                  trip_id: student.itineraries[0]?.trips[0].id,
-                  student_id: student.id,
-                  driver_id: student.driver_id,
-                  type: 'going',
-                });
-              }}
-            >
-              Ida
-            </Button>
-            <Button
-              isLoading={loading}
-              className="font-medium"
-              size="sm"
-              color={
-                student.itineraries[0]?.trips[1].events[1].status === 'absent'
-                  ? 'danger'
-                  : 'success'
-              }
-              isDisabled={
-                student.itineraries[0]?.trips[1]?.started === '' ? false : true
-              }
-              onPress={() => {
-                setLoading(true);
-                debouncedUpdateStatus({
-                  trip_id: student.itineraries[0]?.trips[1].id,
-                  student_id: student.id,
-                  driver_id: student.driver_id,
-                  type: 'return',
-                });
-              }}
-            >
-              Volta
-            </Button>
-          </div>
-          <Button
-            className="font-semibold mt-6 lg:m-0"
-            size="sm"
-            color="primary"
-            onPress={() => {
-              router.push(`/responsible/map/${student.id}`);
-            }}
-          >
-            Visualizar Mapa
-          </Button>
         </div>
         <Card>
           <CardBody className="p-2">
             <Accordion>
-              {student.itineraries.length > 0 ? (
+              {student.itineraries &&
                 student.itineraries.map(
                   (itinerary: any, indexItinerary: any) => {
                     return (
@@ -268,14 +171,7 @@ export default function MyComponent() {
                       </AccordionItem>
                     );
                   },
-                )
-              ) : (
-                <div>
-                  <p className="mt-12 flex justify-center text-center text-gray-500">
-                    Sem registros de viagens no momento.
-                  </p>
-                </div>
-              )}
+                )}
             </Accordion>
           </CardBody>
         </Card>
@@ -295,37 +191,19 @@ export default function MyComponent() {
           <PopoverContent>
             <div className="max-w-[300px]">
               <p>
-                • Nessa página é possível visualizar os 3 últimos dias de rotas
-                realizadas pelo(s) aluno(s). Para visualizar mais dias, acesse o
-                "Histórico".
-              </p>
-              <p>
-                • O botão de "Visualizar Mapa" da acesso direto a viagem atual.
-                A localização só fica disponível enquanto o aluno está dentro do
-                transporte escolar.
-              </p>
-              <p>
-                • Ao marcar ausência ou presença, o motorista é automaticamente
-                notificado.
+                • Nessa página é possível visualizar as informações de todas as
+                rotas realizadas até o momento.
               </p>
             </div>
           </PopoverContent>
         </Popover>
       </div>
       <div className="flex items-center justify-center gap-20">
-        <h1 className="mt-8 mb-6 text-xl font-bold">🚐 Roteiro de Viagens</h1>
+        <h1 className="mt-8 mb-6 text-xl font-bold">🕑 Histórico</h1>
       </div>
       <div className="flex items-center justify-center">
         <div className="max-w-screen-md w-full ">
-          {students.length > 0 ? (
-            students.map((student: any, index: any) =>
-              renderList(student, index),
-            )
-          ) : (
-            <p className="mt-12 flex justify-center text-center text-gray-500">
-              Nenhum estudante cadastrado no momento.
-            </p>
-          )}
+          {student && renderList(student)}
         </div>
       </div>
     </div>

@@ -111,6 +111,7 @@ export class SchoolService {
             id: school.id,
           },
         });
+
         throw new Error('trips_or_itinerary_error');
       }
 
@@ -431,6 +432,12 @@ export class SchoolService {
           },
         });
 
+        try {
+          await this.tripsLogicService.create(user);
+        } catch (error) {
+          throw new Error('trips_error');
+        }
+
         throw new Error('trips_or_itinerary_error');
       }
 
@@ -522,6 +529,12 @@ export class SchoolService {
       const trips = await this.tripsLogicService.create(user);
 
       if (trips.error === true || itinerary_update.error === true) {
+        try {
+          await this.tripsLogicService.create(user);
+        } catch (error) {
+          throw new Error('trips_error');
+        }
+
         throw new Error('trips_or_itinerary_error');
       }
 

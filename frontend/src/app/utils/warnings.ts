@@ -44,8 +44,8 @@ export function errorControl(error: string) {
 export function startNotice() {
   toast(
     `As viagens de hoje já começaram... e por esse motivo não é possível 
-    alterar os dados dos alunos por enquanto. Finalize as viagens de hoje 
-    para conseguir alterar as informações dos alunos.`,
+    alterar os dados por enquanto. Finalize as viagens de hoje 
+    para conseguir alterar as informações.`,
     {
       duration: 10000,
       icon: '🚐',

@@ -18,6 +18,9 @@ import {
   ModalFooter,
   ModalHeader,
   Chip,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from '@nextui-org/react';
 import { EyeIcon } from '../../../components/icons/EyeIcon';
 import { EditIcon } from '../../../components/icons/EditIcon';
@@ -27,6 +30,7 @@ import StudentForm from './StudentForm';
 import Confirmation from '../../../components/Confirmation';
 import toast from 'react-hot-toast';
 import axios from 'axios';
+import { InfoIcon } from '../../../components/icons/InfoIcon';
 
 const columns = [
   { name: 'NOME', uid: 'name' },
@@ -228,8 +232,45 @@ export default function App() {
 
   return (
     <div className="m-4">
-      <div className="flex items-center justify-center mt-20 gap-20">
-        <h1 className="mt-8 mb-6 text-xl font-bold">🤓 Alunos</h1>
+      <div className="flex mt-20 justify-start md:justify-end">
+        <Popover placement="bottom-start">
+          <PopoverTrigger>
+            <Button size="sm" variant="light" className="">
+              <InfoIcon />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent>
+            <div className="max-w-[300px]">
+              <p>
+                • Nessa página é possível cadastrar e visualizar as informações
+                de todos os estudantes.
+              </p>
+              <p>
+                • Ao clicar no ícone de "olho" para visualizar mais informações,
+                é possível copiar o código necessário para o estudante conseguir
+                se cadastrar na plataforma.
+              </p>
+              <p>
+                • Para cadastrar os responsaveis é necessário informar o e-mail
+                que será utilizado na plataforma, se for mais de um responsável
+                é necessário separar por vírgula os e-mails.
+              </p>
+              <p>
+                • Após o responsável realizar o cadastro é liberado o botão para
+                acessar diretamente o aplicativo 'Whatsapp' com o número
+                cadastrado por ele na plataforma (Essa opção fica disponível no
+                menu de mais informações, ícone de olho).
+              </p>
+              <p>
+                • Após iniciar as viagens do dia, não é possível realizar
+                alterações e cadastrar novos estudantes.
+              </p>
+            </div>
+          </PopoverContent>
+        </Popover>
+      </div>
+      <div className="flex items-center justify-center gap-20">
+        <h1 className="mt-8 mb-6 text-xl font-bold">🤓 Estudantes</h1>
         <Button
           className="font-semibold"
           color="primary"

@@ -17,7 +17,7 @@ export default function SignupForm() {
 
   return (
     <div className="flex items-center justify-center h-screen mt-14">
-      <Card className="max-w-xl w-full">
+      <Card className="max-w-xl w-full m-4">
         <CardHeader className="justify-center">
           <p className="text-xl">Login</p>
         </CardHeader>

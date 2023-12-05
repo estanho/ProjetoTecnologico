@@ -29,7 +29,7 @@ export class CronjobsService {
 
       // Verifica o dia de hoje
       const today = new Date();
-      today.setHours(0, 0, 0, 0);
+      today.setHours(3, 0, 0, 0);
 
       // Verifica se é dia de semana
       if (today.getDay() === 6 || today.getDay() === 0) {

@@ -92,8 +92,8 @@ export default function SignupForm() {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen mt-14">
-      <Card className="max-w-xl w-full">
+    <div className="flex items-center justify-center h-screen mt-24">
+      <Card className="max-w-xl w-full m-4">
         <CardHeader className="justify-center">
           <p className="text-xl">Cadastrar</p>
         </CardHeader>
@@ -106,7 +106,7 @@ export default function SignupForm() {
               variant="faded"
               label="Nome"
               labelPlacement="outside"
-              placeholder="Digite seu nome completo"
+              placeholder="Digite seu nome"
               className="mb-6"
               onChange={(e) => setName(e.target.value)}
               isRequired

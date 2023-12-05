@@ -7,38 +7,24 @@ import {
   Accordion,
   AccordionItem,
   Button,
-  ButtonGroup,
-  Dropdown,
-  DropdownTrigger,
-  DropdownItem,
-  DropdownMenu,
-  button,
   Popover,
-  PopoverTrigger,
   PopoverContent,
+  PopoverTrigger,
 } from '@nextui-org/react';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import { errorControl } from '../../utils/warnings';
-import { ChevronDownIcon } from '../../../components/icons/ChevronDownIcon';
-
-import { useRouter } from 'next/navigation';
 import { InfoIcon } from '../../../components/icons/InfoIcon';
 
 export default function MyComponent() {
-  const router = useRouter();
-
-  const [loading, setLoading] = useState(false);
   const [trips, setTrips] = useState<any>([]);
-  const [buttons, setButtons] = useState<any>([]);
 
   const getList = useCallback(async () => {
     try {
-      const { data } = await axios.get(`/api/driver/trip`);
+      const { data } = await axios.get(`/api/driver/historic`);
 
       if (data.error === false) {
         setTrips(data.trips);
-        setButtons(data.trips[0].button);
       } else {
         errorControl(data.message);
       }
@@ -203,67 +189,15 @@ export default function MyComponent() {
           <PopoverContent>
             <div className="max-w-[300px]">
               <p>
-                • Nessa página é possível visualizar os 3 últimos dias de rotas
-                realizadas. Para visualizar mais dias, acesse o "Histórico".
-              </p>
-              <p>• O botão de "Mapa" da acesso direto a viagem atual.</p>
-              <p>
-                • O botão com icone de uma seta à direita da opção de "Mapa" da
-                acesso as visualizações das rotas do dia.
+                • Nessa página é possível visualizar as informações de todas as
+                rotas realizadas até o momento.
               </p>
             </div>
           </PopoverContent>
         </Popover>
       </div>
       <div className="flex items-center justify-center gap-20">
-        <h1 className="mt-8 mb-6 text-xl font-bold">🚐 Roteiro de Viagens</h1>
-        <div>
-          <ButtonGroup variant="flat">
-            <Button
-              isLoading={loading}
-              isDisabled={trips.length === 0}
-              className="font-semibold"
-              color="primary"
-              variant="solid"
-              onPress={() => {
-                router.push('/driver/map');
-              }}
-            >
-              Mapa
-            </Button>
-            {buttons && (
-              <Dropdown placement="bottom-end">
-                <DropdownTrigger>
-                  <Button isIconOnly isLoading={loading} color="primary">
-                    <ChevronDownIcon />
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  disallowEmptySelection
-                  aria-label="options"
-                  selectionMode="single"
-                  className="max-w-[300px]"
-                  items={buttons}
-                >
-                  {(item: any) => (
-                    <DropdownItem
-                      aria-label={item.name}
-                      onClick={() => {
-                        setLoading(true);
-                        router.push(`/driver/map/${item.id}`);
-                      }}
-                    >
-                      <div className="flex">
-                        <h1 className="font-semibold mr-2">Ver Rota:</h1>
-                        {item.name}
-                      </div>
-                    </DropdownItem>
-                  )}
-                </DropdownMenu>
-              </Dropdown>
-            )}
-          </ButtonGroup>
-        </div>
+        <h1 className="mt-8 mb-6 text-xl font-bold">🕑 Histórico</h1>
       </div>
       <div className="flex items-center justify-center">
         <div className="max-w-screen-md w-full ">

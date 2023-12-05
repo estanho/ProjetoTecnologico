@@ -20,10 +20,21 @@ export class TravelController {
     return this.travelService.findTripCurrent(user);
   }
 
+  @Get('trip/:id')
+  findTrip(@CurrentUser() user: UserFromJwt, @Param('id') id: string) {
+    return this.travelService.findTripById(user, id);
+  }
+
   @Get('path')
   @Roles(Role.DRIVER)
-  findPath(@CurrentUser() user: UserFromJwt) {
-    return this.travelService.findPath(user);
+  findPathCurrent(@CurrentUser() user: UserFromJwt) {
+    return this.travelService.findPathCurrent(user);
+  }
+
+  @Get('path/:id')
+  @Roles(Role.DRIVER)
+  findPath(@CurrentUser() user: UserFromJwt, @Param('id') id: string) {
+    return this.travelService.findPathById(user, id);
   }
 
   @Patch('start/:id')

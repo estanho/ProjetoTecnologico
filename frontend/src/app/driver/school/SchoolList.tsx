@@ -19,6 +19,9 @@ import {
   ModalFooter,
   ModalHeader,
   Chip,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from '@nextui-org/react';
 import { EditIcon } from '../../../components/icons/EditIcon';
 import { DeleteIcon } from '../../../components/icons/DeleteIcon';
@@ -27,9 +30,10 @@ import SchoolForm from './SchoolForm';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import Confirmation from '../../../components/Confirmation';
+import { InfoIcon } from '../../../components/icons/InfoIcon';
 
 const columns = [
-  { name: 'STATUS', uid: 'status' },
+  { name: 'ATIVA', uid: 'status' },
   { name: 'NOME', uid: 'name' },
   { name: 'ENDEREÇO', uid: 'address' },
   { name: 'TURNO', uid: 'shift' },
@@ -234,7 +238,33 @@ export default function App() {
 
   return (
     <div className="m-4">
-      <div className="flex items-center justify-center mt-20 gap-20">
+      <div className="flex mt-20 justify-start md:justify-end">
+        <Popover placement="bottom-start">
+          <PopoverTrigger>
+            <Button size="sm" variant="light" className="">
+              <InfoIcon />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent>
+            <div className="max-w-[300px]">
+              <p>
+                • Nessa página é possível cadastrar e visualizar as informações
+                de todas as escolas.
+              </p>
+              <p>• No momento só é possível cadastrar 1 escola por turno.</p>
+              <p>
+                • É possível desativar a geração das rotas de uma determinada
+                escola desativando a opção "ATIVA".
+              </p>
+              <p>
+                • Após iniciar as viagens do dia, não é possível realizar
+                alterações e cadastrar novas escolas.
+              </p>
+            </div>
+          </PopoverContent>
+        </Popover>
+      </div>
+      <div className="flex items-center justify-center gap-20">
         <h1 className="mt-8 mb-6 text-xl font-bold">🏫 Escolas</h1>
         <Button
           className="font-semibold"
