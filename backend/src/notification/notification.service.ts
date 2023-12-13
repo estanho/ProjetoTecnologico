@@ -3,6 +3,7 @@ import { UserFromJwt } from '../auth/models/UserFromJwt';
 import { PrismaService } from '../database/prisma.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import moment from 'moment';
+import 'moment-timezone';
 
 @Injectable()
 export class NotificationService {
@@ -38,7 +39,9 @@ export class NotificationService {
           type: notification.type,
           student: notification.student.name,
           responsible: notification.name,
-          time: `${moment(notification.created_at).format('HH:mm')}`,
+          time: `${moment(notification.created_at)
+            .tz('America/Sao_Paulo')
+            .format('HH:mm')}`,
           day: `${moment(notification.created_at).format('DD/MM/YYYY')}`,
         };
 
