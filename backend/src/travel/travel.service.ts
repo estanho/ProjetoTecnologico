@@ -457,7 +457,6 @@ export class TravelService {
         where: {
           id,
           itinerary_id: itinerary.id,
-          finished_at: null,
         },
         select: {
           id: true,
@@ -875,7 +874,6 @@ export class TravelService {
         where: {
           id,
           itinerary_id: itinerary.id,
-          finished_at: null,
         },
         select: {
           id: true,
