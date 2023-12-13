@@ -4,6 +4,7 @@ import { UserFromJwt } from '../auth/models/UserFromJwt';
 import { PrismaService } from '../database/prisma.service';
 import { ItinerariesService } from '../itineraries/itineraries.service';
 import { NotificationLogicService } from '../notification/notificationLogic.service';
+import 'moment-timezone';
 
 @Injectable()
 export class TravelService {
@@ -178,11 +179,11 @@ export class TravelService {
         schools: '',
         started:
           trip.started_at !== null
-            ? moment(trip.started_at).format('HH:mm')
+            ? moment(trip.started_at).tz('America/Sao_Paulo').format('HH:mm')
             : '',
         finished:
           trip.finished_at !== null
-            ? moment(trip.finished_at).format('HH:mm')
+            ? moment(trip.finished_at).tz('America/Sao_Paulo').format('HH:mm')
             : '',
         start_time: '',
         end_time: '',
@@ -193,57 +194,65 @@ export class TravelService {
       if (trip.type === 'going_morning') {
         newTrip.title = '🌄 MANHÃ [Ida]';
         newTrip.schools = `${itinerary.school_morning.name}`;
-        newTrip.start_time = moment(
-          itinerary.school_morning.morning_arrival,
-        ).format('HH:mm');
+        newTrip.start_time = moment(itinerary.school_morning.morning_arrival)
+          .tz('America/Sao_Paulo')
+          .format('HH:mm');
       } else if (trip.type === 'return_morning') {
         newTrip.title = '🌄 MANHÃ [Volta]';
         newTrip.schools = `${itinerary.school_morning.name}`;
-        newTrip.end_time = moment(
-          itinerary.school_morning.morning_departure,
-        ).format('HH:mm');
+        newTrip.end_time = moment(itinerary.school_morning.morning_departure)
+          .tz('America/Sao_Paulo')
+          .format('HH:mm');
       } else if (trip.type === 'going_afternoon_return_morning') {
         newTrip.title = '🌄 MANHÃ [Volta] -> ⛅ TARDE [Ida]';
         newTrip.schools = `${itinerary.school_morning.name} -> ${itinerary.school_afternoon.name}`;
         newTrip.start_time = moment(
           itinerary.school_afternoon.afternoon_arrival,
-        ).format('HH:mm');
-        newTrip.end_time = moment(
-          itinerary.school_morning.morning_departure,
-        ).format('HH:mm');
+        )
+          .tz('America/Sao_Paulo')
+          .format('HH:mm');
+        newTrip.end_time = moment(itinerary.school_morning.morning_departure)
+          .tz('America/Sao_Paulo')
+          .format('HH:mm');
       } else if (trip.type === 'going_afternoon') {
         newTrip.title = '⛅ TARDE [Ida]';
         newTrip.schools = `${itinerary.school_afternoon.name}`;
         newTrip.start_time = moment(
           itinerary.school_afternoon.afternoon_arrival,
-        ).format('HH:mm');
+        )
+          .tz('America/Sao_Paulo')
+          .format('HH:mm');
       } else if (trip.type === 'return_afternoon') {
         newTrip.title = '⛅ TARDE [Volta]';
         newTrip.schools = `${itinerary.school_afternoon.name}`;
         newTrip.end_time = moment(
           itinerary.school_afternoon.afternoon_departure,
-        ).format('HH:mm');
+        )
+          .tz('America/Sao_Paulo')
+          .format('HH:mm');
       } else if (trip.type === 'going_night_return_afternoon') {
         newTrip.title = '⛅ TARDE [Volta] -> 🌃 NOITE [Ida]';
         newTrip.schools = `${itinerary.school_afternoon.name} -> ${itinerary.school_night.name}`;
-        newTrip.start_time = moment(
-          itinerary.school_night.night_arrival,
-        ).format('HH:mm');
+        newTrip.start_time = moment(itinerary.school_night.night_arrival)
+          .tz('America/Sao_Paulo')
+          .format('HH:mm');
         newTrip.end_time = moment(
           itinerary.school_afternoon.afternoon_departure,
-        ).format('HH:mm');
+        )
+          .tz('America/Sao_Paulo')
+          .format('HH:mm');
       } else if (trip.type === 'going_night') {
         newTrip.title = '🌃 NOITE [Ida]';
         newTrip.schools = `${itinerary.school_night.name}`;
-        newTrip.start_time = moment(
-          itinerary.school_night.night_arrival,
-        ).format('HH:mm');
+        newTrip.start_time = moment(itinerary.school_night.night_arrival)
+          .tz('America/Sao_Paulo')
+          .format('HH:mm');
       } else if (trip.type === 'return_night') {
         newTrip.title = '🌃 Noite [Volta]';
         newTrip.schools = `${itinerary.school_night.name}`;
-        newTrip.end_time = moment(
-          itinerary.school_night.night_departure,
-        ).format('HH:mm');
+        newTrip.end_time = moment(itinerary.school_night.night_departure)
+          .tz('America/Sao_Paulo')
+          .format('HH:mm');
       }
 
       // Começo da corrida
@@ -272,7 +281,7 @@ export class TravelService {
               : '',
           time:
             trip.started_at !== null
-              ? moment(trip.started_at).format('HH:mm')
+              ? moment(trip.started_at).tz('America/Sao_Paulo').format('HH:mm')
               : '',
         };
 
@@ -310,7 +319,9 @@ export class TravelService {
             newEvent.order = trip.student_trips[i].order;
             newEvent.time =
               trip.student_trips[i].time !== null
-                ? moment(trip.student_trips[i].time).format('HH:mm')
+                ? moment(trip.student_trips[i].time)
+                    .tz('America/Sao_Paulo')
+                    .format('HH:mm')
                 : '';
             newTrip.events.push(newEvent);
             newEvent.type =
@@ -346,7 +357,7 @@ export class TravelService {
             : '',
         time:
           trip.finished_at !== null
-            ? moment(trip.finished_at).format('HH:mm')
+            ? moment(trip.finished_at).tz('America/Sao_Paulo').format('HH:mm')
             : '',
       };
 
