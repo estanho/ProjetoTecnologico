@@ -165,7 +165,7 @@ export default function MyComponent() {
                                 size="sm"
                                 variant="dot"
                                 color={
-                                  itinerary.trips[0].events[0].status ===
+                                  itinerary?.trips[0]?.events[0].status ===
                                   'absent'
                                     ? 'danger'
                                     : 'success'
@@ -177,7 +177,7 @@ export default function MyComponent() {
                                 size="sm"
                                 variant="dot"
                                 color={
-                                  itinerary.trips[1].events[1].status ===
+                                  itinerary?.trips[1]?.events[1].status ===
                                   'absent'
                                     ? 'danger'
                                     : 'success'
